@@ -52,14 +52,14 @@ HTML_TEMPLATE = """
 </html>
 """
 
-@app.route('/certificate/<cert_id>')
+@app.route('/certificates/<cert_id>')
 def get_certificate(cert_id):
-    return jsonify({
+    return {
         "student_name": "Jane Doe",
         "course": "Advanced Python",
         "completion_date": "2024-06-10",
         "certificate_id": cert_id
-    })
+    }
 
 @app.route('/cert/<certificate_id>')
 def serve_certificate_page(certificate_id):
