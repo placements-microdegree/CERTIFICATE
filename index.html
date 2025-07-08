@@ -28,7 +28,7 @@
     const certificateId = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
 
     // Adjust the API URL to match your FastAPI backend
-    const apiUrl = `http://localhost:5000/certificate/${encodeURIComponent(certificateId)}`;
+    const apiUrl = `https://certificate-verification-aqvv.onrender.com/certificates/${certificateId}`;
 
     fetch(apiUrl)
       .then(response => {
