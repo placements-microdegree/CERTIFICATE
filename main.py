@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, render_template_string
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -29,19 +31,25 @@ HTML_TEMPLATE = """
   </div>
   <script>
     const pathParts = window.location.pathname.split('/');
-    const certificateId = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
-    const apiUrl = `http://localhost:5000/certificate/${encodeURIComponent(certificateId)}`;
+    const certificateId = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2] || 'test123';
+    const apiUrl = `https://certificate-verification-aqvv.onrender.com/certificates/${certificateId}`;
+    
+    console.log('Fetching from:', apiUrl);
+    
     fetch(apiUrl)
       .then(response => {
+        console.log('Response status:', response.status);
         if (!response.ok) throw new Error("Certificate not found");
         return response.json();
       })
       .then(data => {
+        console.log('Received data:', data);
         document.getElementById("student-name").textContent = data.student_name;
         document.getElementById("course-name").textContent = data.course;
         document.getElementById("completion-date").textContent = data.completion_date;
       })
       .catch(error => {
+        console.error('Fetch error:', error);
         document.getElementById("certificate-card").innerHTML = `
           <h1 class="text-2xl font-bold text-center text-red-600 mb-4">Error</h1>
           <p class="text-center text-gray-700">${error.message}</p>
@@ -52,12 +60,16 @@ HTML_TEMPLATE = """
 </html>
 """
 
+@app.route('/')
+def read_root():
+    return {"message": "Certificates Backend API (Flask)", "status": "running", "version": "1.0.0"}
+
 @app.route('/certificates/<cert_id>')
 def get_certificate(cert_id):
     return {
         "student_name": "Jane Doe",
-        "course": "Advanced Python",
-        "completion_date": "2024-06-10",
+        "course": "Advanced Python Programming",
+        "completion_date": "2024-01-15",
         "certificate_id": cert_id
     }
 
