@@ -25,22 +25,27 @@
   <script>
     // Get the certificate ID from the URL path (e.g., /cert/123)
     const pathParts = window.location.pathname.split('/');
-    const certificateId = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
+    const certificateId = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2] || 'test123';
 
     // Adjust the API URL to match your FastAPI backend
     const apiUrl = `https://certificate-verification-aqvv.onrender.com/certificates/${certificateId}`;
 
+    console.log('Fetching from:', apiUrl); // Debug log
+
     fetch(apiUrl)
       .then(response => {
+        console.log('Response status:', response.status); // Debug log
         if (!response.ok) throw new Error("Certificate not found"); 
         return response.json();
       })
       .then(data => {
+        console.log('Received data:', data); // Debug log
         document.getElementById("student-name").textContent = data.student_name;
         document.getElementById("course-name").textContent = data.course;
         document.getElementById("completion-date").textContent = data.completion_date;
       })
       .catch(error => {
+        console.error('Fetch error:', error); // Debug log
         document.getElementById("certificate-card").innerHTML = `
           <h1 class="text-2xl font-bold text-center text-red-600 mb-4">Error</h1>
           <p class="text-center text-gray-700">${error.message}</p>
