@@ -24,12 +24,13 @@
   </div>
   <script>
     // Get the certificate ID from the URL path (e.g., /cert/123)
-    const pathParts = window.location.pathname.split('/');
-    const certificateId = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2] || 'test123';
+    const pathParts = window.location.pathname.split('/').filter(part => part.length > 0);
+    const certificateId = pathParts[pathParts.length - 1] || 'test123';
 
     // Backend API URL
     const apiUrl = `https://certificate-verification-aqvv.onrender.com/certificates/${certificateId}`;
 
+    console.log('Certificate ID:', certificateId);
     console.log('Fetching from:', apiUrl);
 
     fetch(apiUrl, {
