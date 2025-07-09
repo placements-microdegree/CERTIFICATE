@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from supabase import create_client
+from fastapi.middleware.cors import CORSMiddleware
+# from supabase import create_client
 from dotenv import load_dotenv
 import os
 from fastapi.responses import HTMLResponse
@@ -7,18 +8,26 @@ from fastapi.responses import HTMLResponse
 # Load .env variables
 load_dotenv()
 
-# Supabase credentials
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+# Supabase credentials - temporarily disabled for testing
+# SUPABASE_URL = os.getenv("SUPABASE_URL")
+# SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise RuntimeError("SUPABASE_URL and SUPABASE_KEY must be set in the environment variables or .env file.")
+# if not SUPABASE_URL or not SUPABASE_KEY:
+#     raise RuntimeError("SUPABASE_URL and SUPABASE_KEY must be set in the environment variables or .env file.")
 
 # Initialize Supabase client
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Initialize FastAPI app
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify your frontend domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -51,7 +60,7 @@ HTML_TEMPLATE = """
     const certificateId = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
 
     // Adjust the API URL to match your FastAPI backend
-    const apiUrl = `http://localhost:8000/certificates/${certificateId}`;
+    const apiUrl = `https://certificate-verification-aqvv.onrender.com/certificates/${certificateId}`;
 
     fetch(apiUrl)
       .then(response => {
@@ -80,13 +89,13 @@ def read_root():
 
 @app.get("/certificates/{certificate_id}")
 def get_certificate(certificate_id: str):
-    try:
-        response = supabase.table("certificates").select("*").eq("certificate_id", certificate_id).execute()
-        if not response.data:
-            raise HTTPException(status_code=404, detail="Certificate not found")
-        return response.data[0]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # Temporary mock data for testing
+    return {
+        "student_name": "Jane Doe",
+        "course": "Advanced Python Programming",
+        "completion_date": "2024-01-15",
+        "certificate_id": certificate_id
+    }
 
 @app.get("/cert/{certificate_id}", response_class=HTMLResponse)
 def serve_certificate_page(certificate_id: str):
