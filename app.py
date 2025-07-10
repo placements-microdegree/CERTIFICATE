@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, send_from_directory
+from flask import Flask, render_template_string, send_from_directory, request
 from flask_cors import CORS
 import os
 
@@ -20,17 +20,20 @@ def get_certificate(cert_id):
 
 @app.route('/cert/<certificate_id>')
 def serve_certificate_page(certificate_id):
-    # Read the HTML template
-    with open('index.html', 'r', encoding='utf-8') as f:
-        html_content = f.read()
-    
-    # Replace the CDN script with our built CSS
-    html_content = html_content.replace(
-        '<script src="https://cdn.tailwindcss.com"></script>',
-        '<link href="/static/output.css" rel="stylesheet">'
-    )
-    
-    return html_content
+    try:
+        # Read the HTML template
+        with open('index.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        
+        # Replace the CDN script with our built CSS
+        html_content = html_content.replace(
+            '<script src="https://cdn.tailwindcss.com"></script>',
+            '<link href="/static/output.css" rel="stylesheet">'
+        )
+        
+        return html_content
+    except Exception as e:
+        return f"Error serving certificate page: {str(e)}", 500
 
 @app.route('/certificate/<certificate_id>')
 def serve_certificate_template(certificate_id):
@@ -51,5 +54,10 @@ def serve_certificate_template(certificate_id):
 def static_files(filename):
     return send_from_directory('static', filename)
 
+@app.route('/health')
+def health_check():
+    return {"status": "healthy", "message": "API is running"}
+
+# For Vercel deployment
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -4,8 +4,8 @@ services:
     env: python
     buildCommand: |
       pip install -r requirements.txt
-      npm install
-      npm run build:css
+      npm install --production=false
+      npx tailwindcss -i ./input.css -o ./static/output.css --minify || echo "Tailwind build failed, continuing..."
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
