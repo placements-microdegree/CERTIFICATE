@@ -6,10 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/static/output.css" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1d4ed8 100%);
       min-height: 100vh;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+    
+    .background-pattern {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
     }
     
     .verification-container {
@@ -18,22 +38,67 @@
       justify-content: center;
       min-height: 100vh;
       padding: 2rem;
+      position: relative;
     }
     
     .verification-card {
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border-radius: 1rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      padding: 3rem;
-      max-width: 32rem;
+      backdrop-filter: blur(20px);
+      border-radius: 1.5rem;
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+      padding: 3.5rem;
+      max-width: 36rem;
       width: 100%;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1s ease-out;
+    }
+    
+    .verification-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1d4ed8, #3b82f6, #1d4ed8);
+      animation: borderGlow 3s ease-in-out infinite;
+    }
+    
+    @keyframes borderGlow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
     
     .verification-header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+    
+    .verification-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
     }
     
     .verification-title {
@@ -41,39 +106,69 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
+      font-size: 2.75rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.025em;
     }
     
     .verification-subtitle {
       color: #6b7280;
-      font-size: 1.125rem;
+      font-size: 1.25rem;
       margin-bottom: 2rem;
+      font-weight: 500;
     }
     
     .certificate-info {
       background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      border-radius: 0.75rem;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
       border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      animation: slideInUp 0.8s ease-out 0.3s both;
+    }
+    
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+      transition: all 0.3s ease;
+    }
+    
+    .info-row:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
     }
     
     .info-label {
       color: #6b7280;
       font-size: 0.875rem;
-      font-weight: 500;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
     }
     
     .info-value {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       font-weight: 600;
       color: #1f2937;
-      margin-bottom: 1rem;
     }
     
     .student-name-value {
@@ -98,10 +193,28 @@
       font-family: 'Courier New', monospace;
       background: #1f2937;
       color: #f9fafb;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      display: inline-block;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.75rem;
       font-size: 0.875rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .certificate-id-value::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
     }
     
     .loading-spinner {
@@ -118,41 +231,120 @@
       to { transform: rotate(360deg); }
     }
     
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+    
+    .status-verified {
+      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    
+    .status-error {
+      background: linear-gradient(135deg, #fef2f2, #fecaca);
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+    
     .error-message {
       background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
       border: 1px solid #fecaca;
-      border-radius: 0.75rem;
-      padding: 2rem;
+      border-radius: 1rem;
+      padding: 2.5rem;
       text-align: center;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
+      animation: shake 0.6s ease-in-out;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
     }
     
     .error-title {
       color: #dc2626;
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-size: 1.75rem;
+      font-weight: 700;
       margin-bottom: 1rem;
     }
     
     .error-description {
       color: #6b7280;
-      font-size: 1rem;
+      font-size: 1.125rem;
       margin-bottom: 1rem;
+      line-height: 1.6;
     }
     
     .verification-note {
       background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
       border: 1px solid #bfdbfe;
-      border-radius: 0.75rem;
-      padding: 1rem;
+      border-radius: 1rem;
+      padding: 1.5rem;
       margin-top: 2rem;
       text-align: center;
+      animation: fadeIn 1s ease-out 1s both;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     
     .verification-note p {
       color: #1e40af;
       font-size: 0.875rem;
-      margin: 0;
+      margin: 0.25rem 0;
+      font-weight: 500;
+    }
+    
+    .qr-code-placeholder {
+      background: #f3f4f6;
+      border: 2px dashed #d1d5db;
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #6b7280;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+    }
+    
+    .qr-code-placeholder:hover {
+      border-color: #3b82f6;
+      background: #f8fafc;
+    }
+    
+    .qr-code-placeholder::before {
+      content: '📱';
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 1rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    .footer-info {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+      color: #6b7280;
+      font-size: 0.75rem;
     }
     
     @media (max-width: 768px) {
@@ -162,49 +354,86 @@
       
       .verification-card {
         padding: 2rem;
+        margin: 1rem;
       }
       
       .verification-title {
         font-size: 2rem;
       }
+      
+      .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      
+      .certificate-info {
+        padding: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="background-pattern"></div>
+  
   <div class="verification-container">
     <div class="verification-card" id="verification-card">
       <div class="verification-header">
+        <div class="verification-icon">🔍</div>
         <h1 class="verification-title">Certificate Verification</h1>
         <p class="verification-subtitle">Verify the authenticity of your digital certificate</p>
       </div>
       
       <div class="certificate-info">
-        <div class="info-label">Student Name</div>
-        <div class="info-value student-name-value" id="student-name">
-          <span class="loading-spinner"></span> Loading...
+        <div class="info-row">
+          <span class="info-label">Student Name</span>
+          <span class="info-value student-name-value" id="student-name">
+            <span class="loading-spinner"></span> Loading...
+          </span>
         </div>
         
-        <div class="info-label">Course</div>
-        <div class="info-value course-name-value" id="course-name">
-          <span class="loading-spinner"></span> Loading...
+        <div class="info-row">
+          <span class="info-label">Course</span>
+          <span class="info-value course-name-value" id="course-name">
+            <span class="loading-spinner"></span> Loading...
+          </span>
         </div>
         
-        <div class="info-label">Completion Date</div>
-        <div class="info-value" id="completion-date">
-          <span class="loading-spinner"></span> Loading...
+        <div class="info-row">
+          <span class="info-label">Completion Date</span>
+          <span class="info-value" id="completion-date">
+            <span class="loading-spinner"></span> Loading...
+          </span>
         </div>
         
-        <div class="info-label">Certificate ID</div>
-        <div class="info-value">
+        <div class="info-row">
+          <span class="info-label">Certificate ID</span>
           <span class="certificate-id-value" id="certificate-id">
             <span class="loading-spinner"></span> Loading...
           </span>
+        </div>
+        
+        <div class="status-badge status-verified">
+          ✅ Certificate Verified
         </div>
       </div>
       
       <div class="verification-note">
         <p>✅ This certificate has been verified and is authentic</p>
         <p>🔒 Certificate data is securely retrieved from our database</p>
+        <p>📱 Scan QR code for mobile verification</p>
+        <p>🛡️ Protected by blockchain verification technology</p>
+      </div>
+      
+      <div class="qr-code-placeholder">
+        QR Code for Mobile Verification
+        <br>
+        <small>Scan to verify on mobile device</small>
+      </div>
+      
+      <div class="footer-info">
+        <p>Certificate Verification System v2.0</p>
+        <p>Powered by Advanced Blockchain Technology</p>
       </div>
     </div>
   </div>
@@ -244,6 +473,7 @@
         console.error('Fetch error:', error);
         document.getElementById("verification-card").innerHTML = `
           <div class="verification-header">
+            <div class="verification-icon">❌</div>
             <h1 class="verification-title">Certificate Not Found</h1>
             <p class="verification-subtitle">Unable to verify the requested certificate</p>
           </div>
@@ -256,11 +486,15 @@
             <div class="error-description">
               Please check the certificate ID and try again.
             </div>
+            <div class="status-badge status-error">
+              ❌ Certificate Not Found
+            </div>
           </div>
           
           <div class="verification-note">
             <p>🔍 If you believe this is an error, please contact support</p>
             <p>📧 Include the certificate ID when reporting issues</p>
+            <p>🔄 Try refreshing the page or check the URL</p>
           </div>
         `;
       });

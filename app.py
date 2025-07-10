@@ -7,7 +7,13 @@ CORS(app)
 
 @app.route('/')
 def read_root():
-    return {"message": "Certificates Backend API (Flask)", "status": "running", "version": "1.0.0"}
+    try:
+        # Read the index.html file
+        with open('index.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return html_content
+    except Exception as e:
+        return f"Error serving index page: {str(e)}", 500
 
 @app.route('/certificates/<cert_id>')
 def get_certificate(cert_id):
@@ -21,16 +27,9 @@ def get_certificate(cert_id):
 @app.route('/cert/<certificate_id>')
 def serve_certificate_page(certificate_id):
     try:
-        # Read the HTML template
-        with open('index.html', 'r', encoding='utf-8') as f:
+        # Read the certificate.html file
+        with open('certificate.html', 'r', encoding='utf-8') as f:
             html_content = f.read()
-        
-        # Replace the CDN script with our built CSS
-        html_content = html_content.replace(
-            '<script src="https://cdn.tailwindcss.com"></script>',
-            '<link href="/static/output.css" rel="stylesheet">'
-        )
-        
         return html_content
     except Exception as e:
         return f"Error serving certificate page: {str(e)}", 500
@@ -61,3 +60,6 @@ def health_check():
 # For Vercel deployment
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
+# For Vercel serverless
+app.debug = True

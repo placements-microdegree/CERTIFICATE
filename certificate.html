@@ -6,22 +6,130 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/static/output.css" rel="stylesheet">
   <style>
-    .certificate-container {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1d4ed8 100%);
       min-height: 100vh;
+      font-family: 'Georgia', serif;
+      margin: 0;
       padding: 2rem;
+      overflow-x: hidden;
+    }
+    
+    .background-pattern {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .certificate-container {
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
     }
     
-    .certificate-border {
-      border: 8px solid #1d4ed8;
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    .certificate {
+      background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+      border: 12px solid #1d4ed8;
+      border-radius: 1.5rem;
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(29, 78, 216, 0.1);
+      padding: 4.5rem;
+      max-width: 55rem;
+      width: 100%;
       position: relative;
       overflow: hidden;
-      animation: fadeInUp 0.8s ease-out;
+      animation: certificateAppear 1.2s ease-out;
+    }
+    
+    @keyframes certificateAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.85) rotate(-3deg);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+    }
+    
+    .certificate::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #1d4ed8, #3b82f6, #1d4ed8);
+      animation: borderGlow 4s ease-in-out infinite;
+    }
+    
+    @keyframes borderGlow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    .certificate-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+      position: relative;
+    }
+    
+    .certificate-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #1d4ed8;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+      text-shadow: 0 4px 8px rgba(29, 78, 216, 0.2);
+    }
+    
+    @keyframes titleGlow {
+      from { 
+        text-shadow: 0 4px 8px rgba(29, 78, 216, 0.2);
+        transform: scale(1);
+      }
+      to { 
+        text-shadow: 0 6px 12px rgba(29, 78, 216, 0.4);
+        transform: scale(1.02);
+      }
+    }
+    
+    .certificate-subtitle {
+      font-size: 1.5rem;
+      color: #6b7280;
+      font-style: italic;
+      margin-bottom: 2.5rem;
+      font-weight: 500;
+    }
+    
+    .certificate-content {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    
+    .presented-to {
+      font-size: 1.25rem;
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 1s ease-out 0.4s both;
+      font-weight: 500;
     }
     
     @keyframes fadeInUp {
@@ -35,271 +143,309 @@
       }
     }
     
-    .certificate-border::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #1d4ed8, #3b82f6, #1d4ed8);
-    }
-    
-    .certificate-header {
-      background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-      color: white;
-      padding: 3rem 2rem;
-      text-align: center;
-      position: relative;
-    }
-    
-    .certificate-header::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-top: 20px solid #3b82f6;
-    }
-    
-    .certificate-body {
-      padding: 4rem 3rem;
-      text-align: center;
-      position: relative;
-    }
-    
-    .certificate-body::before {
-      content: '★';
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      font-size: 2rem;
-      color: #1d4ed8;
-      opacity: 0.3;
-      animation: twinkle 2s ease-in-out infinite;
-    }
-    
-    .certificate-body::after {
-      content: '★';
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      font-size: 2rem;
-      color: #1d4ed8;
-      opacity: 0.3;
-      animation: twinkle 2s ease-in-out infinite 1s;
-    }
-    
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 0.8; }
-    }
-    
     .student-name {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #1f2937;
+      margin-bottom: 2.5rem;
       background: linear-gradient(135deg, #1d4ed8, #3b82f6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      font-size: 3.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-      animation: slideInLeft 1s ease-out 0.3s both;
+      animation: nameHighlight 2.5s ease-out 0.7s both;
+      text-shadow: 0 4px 8px rgba(29, 78, 216, 0.1);
     }
     
-    @keyframes slideInLeft {
+    @keyframes nameHighlight {
       from {
         opacity: 0;
-        transform: translateX(-30px);
+        transform: scale(0.7) translateY(20px);
       }
       to {
         opacity: 1;
-        transform: translateX(0);
+        transform: scale(1) translateY(0);
       }
     }
     
+    .certificate-text {
+      font-size: 1.375rem;
+      color: #374151;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+      animation: fadeInUp 1s ease-out 1s both;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
     .course-name {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #059669;
+      margin-bottom: 2.5rem;
       background: linear-gradient(135deg, #059669, #10b981);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      font-size: 2.5rem;
-      font-weight: 600;
-      margin: 1.5rem 0;
-      animation: slideInRight 1s ease-out 0.6s both;
-    }
-    
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-    
-    .certificate-footer {
-      padding: 2rem;
-      text-align: center;
-      border-top: 2px solid #e5e7eb;
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      animation: fadeIn 1s ease-out 0.9s both;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    .certificate-id {
-      font-family: 'Courier New', monospace;
-      background: #1f2937;
-      color: #f9fafb;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      display: inline-block;
-      margin: 0.5rem 0;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .certificate-id::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      animation: shimmer 2s infinite;
-    }
-    
-    @keyframes shimmer {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
-    
-    .verification-note {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-top: 1rem;
-      padding: 1rem;
-      background: #f3f4f6;
-      border-radius: 0.5rem;
-      border-left: 4px solid #3b82f6;
+      animation: fadeInUp 1s ease-out 1.3s both;
     }
     
     .completion-date {
       font-size: 1.25rem;
-      color: #374151;
-      font-weight: 500;
-      margin: 1rem 0;
-      animation: slideInUp 1s ease-out 0.9s both;
-    }
-    
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .certificate-subtitle {
-      font-size: 1.5rem;
       color: #6b7280;
-      margin: 1rem 0;
-      font-style: italic;
-      animation: fadeIn 1s ease-out 0.6s both;
+      margin-bottom: 3.5rem;
+      animation: fadeInUp 1s ease-out 1.6s both;
+      font-weight: 500;
     }
     
-    .loading-animation {
-      display: inline-block;
-      width: 2rem;
-      height: 2rem;
-      border: 3px solid #e5e7eb;
+    .certificate-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 4rem;
+      animation: fadeInUp 1s ease-out 1.9s both;
+    }
+    
+    .signature-section {
+      text-align: center;
+      flex: 1;
+      margin: 0 2rem;
+    }
+    
+    .signature-line {
+      width: 250px;
+      height: 3px;
+      background: #1d4ed8;
+      margin: 1.5rem auto;
+      position: relative;
+      border-radius: 2px;
+    }
+    
+    .signature-line::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: linear-gradient(90deg, transparent, #1d4ed8, transparent);
+      animation: signatureDraw 2s ease-out 2.2s both;
+      border-radius: 2px;
+    }
+    
+    @keyframes signatureDraw {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    
+    .signature-title {
+      font-size: 1rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+    
+    .certificate-id {
+      position: absolute;
+      bottom: 2.5rem;
+      right: 2.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: #6b7280;
+      background: #f3f4f6;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+      animation: fadeIn 1s ease-out 2.5s both;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .certificate-id::before {
+      content: 'ID: ';
+      font-weight: 700;
+    }
+    
+    .verification-note {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 2.5rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+      animation: fadeIn 1s ease-out 2.8s both;
+      font-weight: 500;
+    }
+    
+    .verification-note::before {
+      content: '🔒 ';
+    }
+    
+    .decorative-elements {
+      position: absolute;
+      top: 2.5rem;
+      right: 2.5rem;
+      font-size: 4rem;
+      opacity: 0.08;
+      animation: float 4s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+    }
+    
+    .decorative-border {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+      border: 2px solid rgba(29, 78, 216, 0.1);
+      border-radius: 0.5rem;
+      pointer-events: none;
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeOut 0.8s ease-out 1.5s forwards;
+    }
+    
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+    
+    .loading-spinner {
+      width: 4rem;
+      height: 4rem;
+      border: 5px solid #e5e7eb;
       border-radius: 50%;
-      border-top-color: #3b82f6;
-      animation: spin 1s ease-in-out infinite;
+      border-top-color: #1d4ed8;
+      animation: spin 1.2s ease-in-out infinite;
     }
     
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
     
+    .certificate-seal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(29, 78, 216, 0.05) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: sealGlow 3s ease-in-out infinite;
+    }
+    
+    @keyframes sealGlow {
+      0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+    }
+    
     @media (max-width: 768px) {
-      .certificate-container {
+      body {
         padding: 1rem;
       }
       
-      .certificate-body {
-        padding: 2rem 1rem;
+      .certificate {
+        padding: 2.5rem;
+        margin: 1rem;
       }
       
-      .student-name {
+      .certificate-title {
         font-size: 2.5rem;
       }
       
-      .course-name {
-        font-size: 1.75rem;
+      .student-name {
+        font-size: 2rem;
       }
       
-      .certificate-header {
-        padding: 2rem 1rem;
+      .certificate-footer {
+        flex-direction: column;
+        gap: 2.5rem;
+      }
+      
+      .signature-section {
+        margin: 0;
+      }
+      
+      .certificate-id,
+      .verification-note {
+        position: static;
+        text-align: center;
+        margin-top: 1.5rem;
+      }
+      
+      .decorative-elements {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
+  <div class="background-pattern"></div>
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+  
   <div class="certificate-container">
-    <div class="certificate-border rounded-lg max-w-5xl w-full" id="certificate">
+    <div class="certificate">
+      <div class="decorative-border"></div>
+      <div class="certificate-seal"></div>
+      <div class="decorative-elements">🎓</div>
+      
       <div class="certificate-header">
-        <h1 class="text-5xl font-bold mb-4">Certificate of Completion</h1>
-        <p class="text-2xl opacity-90">This is to certify that</p>
+        <h1 class="certificate-title">Certificate of Completion</h1>
+        <p class="certificate-subtitle">This is to certify that</p>
       </div>
       
-      <div class="certificate-body">
-        <h2 class="student-name" id="student-name">
-          <span class="loading-animation"></span> Loading...
-        </h2>
-        <p class="certificate-subtitle">has successfully completed the course</p>
-        <h3 class="course-name" id="course-name">
-          <span class="loading-animation"></span> Loading...
-        </h3>
-        <p class="text-xl text-gray-600 mb-4">on</p>
-        <p class="completion-date" id="completion-date">
-          <span class="loading-animation"></span> Loading...
+      <div class="certificate-content">
+        <p class="presented-to">has successfully completed the course</p>
+        <h2 class="student-name" id="student-name">Loading...</h2>
+        <p class="certificate-text">
+          demonstrating exceptional dedication, commitment, and mastery of the subject matter.
+          This certificate represents the culmination of hard work, perseverance, and a genuine
+          passion for learning. The recipient has shown outstanding achievement and has met
+          all requirements for successful completion of this comprehensive program.
         </p>
+        <h3 class="course-name" id="course-name">Loading...</h3>
+        <p class="completion-date" id="completion-date">Loading...</p>
       </div>
       
       <div class="certificate-footer">
-        <p class="text-sm text-gray-600 mb-2">Certificate ID:</p>
-        <p class="certificate-id" id="certificate-id">
-          <span class="loading-animation"></span> Loading...
-        </p>
-        <div class="verification-note">
-          <p class="text-xs text-gray-500">This certificate is digitally verified and can be authenticated online.</p>
-          <p class="text-xs text-gray-500 mt-1">For verification, visit the certificate verification portal.</p>
+        <div class="signature-section">
+          <div class="signature-line"></div>
+          <p class="signature-title">Course Instructor</p>
+        </div>
+        <div class="signature-section">
+          <div class="signature-line"></div>
+          <p class="signature-title">Program Director</p>
         </div>
       </div>
+      
+      <div class="certificate-id" id="certificate-id">Loading...</div>
+      <div class="verification-note">This certificate can be verified online</div>
     </div>
   </div>
 
   <script>
-    // Get the certificate ID from the URL path
+    // Get the certificate ID from the URL path (e.g., /cert/123)
     const pathParts = window.location.pathname.split('/').filter(part => part.length > 0);
     const certificateId = pathParts[pathParts.length - 1] || 'test123';
 
-    // Backend API URL
+    // Backend API URL - use relative URL for same domain
     const apiUrl = `/certificates/${certificateId}`;
 
     console.log('Certificate ID:', certificateId);
@@ -322,24 +468,27 @@
         console.log('Received data:', data);
         document.getElementById("student-name").textContent = data.student_name;
         document.getElementById("course-name").textContent = data.course;
-        document.getElementById("completion-date").textContent = data.completion_date;
+        document.getElementById("completion-date").textContent = `Completed on ${data.completion_date}`;
         document.getElementById("certificate-id").textContent = data.certificate_id;
       })
       .catch(error => {
         console.error('Fetch error:', error);
-        document.getElementById("certificate").innerHTML = `
+        document.querySelector('.certificate').innerHTML = `
           <div class="certificate-header">
-            <h1 class="text-5xl font-bold mb-4">Certificate Not Found</h1>
+            <h1 class="certificate-title">Certificate Not Found</h1>
+            <p class="certificate-subtitle">Unable to load certificate data</p>
           </div>
-          <div class="certificate-body">
-            <p class="text-2xl text-red-600 mb-4">The certificate with ID "${certificateId}" could not be found.</p>
-            <p class="text-lg text-gray-500">Please check the certificate ID and try again.</p>
-            <div class="verification-note mt-4">
-              <p class="text-sm text-gray-600">If you believe this is an error, please contact support.</p>
-            </div>
+          
+          <div class="certificate-content">
+            <p class="certificate-text">
+              The certificate with ID "${certificateId}" could not be found in our database.
+              Please verify the certificate ID and try again.
+            </p>
           </div>
+          
+          <div class="verification-note">Contact support if you believe this is an error</div>
         `;
       });
   </script>
 </body>
-</html>
+</html> 

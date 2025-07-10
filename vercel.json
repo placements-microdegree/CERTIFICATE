@@ -25,5 +25,5 @@
       "runtime": "python3.9"
     }
   },
-  "buildCommand": "npm install && npx tailwindcss -i ./input.css -o ./static/output.css --minify"
+  "buildCommand": "chmod +x build.sh && ./build.sh"
 } 
