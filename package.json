@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "npx tailwindcss -i ./input.css -o ./static/output.css --minify",
-    "watch:css": "npx tailwindcss -i ./input.css -o ./static/output.css --watch"
+    "build:css": "node node_modules/tailwindcss/lib/cli.js -i ./input.css -o ./static/output.css --minify",
+    "watch:css": "node node_modules/tailwindcss/lib/cli.js -i ./input.css -o ./static/output.css --watch"
   },
   "repository": {
     "type": "git",

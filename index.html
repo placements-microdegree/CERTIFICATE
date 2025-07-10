@@ -2,30 +2,213 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Certificate Verification</title>
+  <title>Certificate Verification Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="/static/output.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    .verification-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    
+    .verification-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      padding: 3rem;
+      max-width: 32rem;
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .verification-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .verification-title {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .verification-subtitle {
+      color: #6b7280;
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+    }
+    
+    .certificate-info {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .info-label {
+      color: #6b7280;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    
+    .info-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
+    
+    .student-name-value {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .course-name-value {
+      background: linear-gradient(135deg, #059669, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .certificate-id-value {
+      font-family: 'Courier New', monospace;
+      background: #1f2937;
+      color: #f9fafb;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      display: inline-block;
+      font-size: 0.875rem;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 3px solid #e5e7eb;
+      border-radius: 50%;
+      border-top-color: #3b82f6;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      border: 1px solid #fecaca;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+    
+    .error-title {
+      color: #dc2626;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .error-description {
+      color: #6b7280;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .verification-note {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 1px solid #bfdbfe;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    
+    .verification-note p {
+      color: #1e40af;
+      font-size: 0.875rem;
+      margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+      .verification-container {
+        padding: 1rem;
+      }
+      
+      .verification-card {
+        padding: 2rem;
+      }
+      
+      .verification-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full" id="certificate-card">
-    <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">Certificate Verification</h1>
-    <div class="mb-6">
-      <p class="text-gray-600 text-center">Student Name</p>
-      <p class="text-xl font-semibold text-center text-blue-700 mt-2" id="student-name">Loading...</p>
-    </div>
-    <div class="mb-6">
-      <p class="text-gray-600 text-center">Course</p>
-      <p class="text-lg font-medium text-center text-green-700 mt-2" id="course-name">Loading...</p>
-    </div>
-    <div class="mb-6">
-      <p class="text-gray-600 text-center">Completion Date</p>
-      <p class="text-md text-center text-gray-800 mt-2" id="completion-date">Loading...</p>
-    </div>
-    <div class="mb-6">
-      <p class="text-gray-600 text-center">Certificate ID</p>
-      <p class="text-sm text-center text-gray-500 mt-2" id="certificate-id">Loading...</p>
+<body>
+  <div class="verification-container">
+    <div class="verification-card" id="verification-card">
+      <div class="verification-header">
+        <h1 class="verification-title">Certificate Verification</h1>
+        <p class="verification-subtitle">Verify the authenticity of your digital certificate</p>
+      </div>
+      
+      <div class="certificate-info">
+        <div class="info-label">Student Name</div>
+        <div class="info-value student-name-value" id="student-name">
+          <span class="loading-spinner"></span> Loading...
+        </div>
+        
+        <div class="info-label">Course</div>
+        <div class="info-value course-name-value" id="course-name">
+          <span class="loading-spinner"></span> Loading...
+        </div>
+        
+        <div class="info-label">Completion Date</div>
+        <div class="info-value" id="completion-date">
+          <span class="loading-spinner"></span> Loading...
+        </div>
+        
+        <div class="info-label">Certificate ID</div>
+        <div class="info-value">
+          <span class="certificate-id-value" id="certificate-id">
+            <span class="loading-spinner"></span> Loading...
+          </span>
+        </div>
+      </div>
+      
+      <div class="verification-note">
+        <p>✅ This certificate has been verified and is authentic</p>
+        <p>🔒 Certificate data is securely retrieved from our database</p>
+      </div>
     </div>
   </div>
+
   <script>
     // Get the certificate ID from the URL path (e.g., /cert/123)
     const pathParts = window.location.pathname.split('/').filter(part => part.length > 0);
@@ -59,10 +242,26 @@
       })
       .catch(error => {
         console.error('Fetch error:', error);
-        document.getElementById("certificate-card").innerHTML = `
-          <h1 class="text-2xl font-bold text-center text-red-600 mb-4">Certificate Not Found</h1>
-          <p class="text-center text-gray-700">The certificate with ID "${certificateId}" could not be found.</p>
-          <p class="text-center text-sm text-gray-500 mt-2">Please check the certificate ID and try again.</p>
+        document.getElementById("verification-card").innerHTML = `
+          <div class="verification-header">
+            <h1 class="verification-title">Certificate Not Found</h1>
+            <p class="verification-subtitle">Unable to verify the requested certificate</p>
+          </div>
+          
+          <div class="error-message">
+            <div class="error-title">❌ Verification Failed</div>
+            <div class="error-description">
+              The certificate with ID "${certificateId}" could not be found in our database.
+            </div>
+            <div class="error-description">
+              Please check the certificate ID and try again.
+            </div>
+          </div>
+          
+          <div class="verification-note">
+            <p>🔍 If you believe this is an error, please contact support</p>
+            <p>📧 Include the certificate ID when reporting issues</p>
+          </div>
         `;
       });
   </script>
