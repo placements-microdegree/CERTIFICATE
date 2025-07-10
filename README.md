@@ -1,20 +1,14 @@
 # Certificate Verification Backend
 
-A Flask-based backend for certificate verification with a modern Tailwind CSS frontend.
+A clean Flask-based backend for certificate verification with a modern Tailwind CSS frontend.
 
-## ✅ Fixed Issues
+## ✅ Features
 
-### 1. Tailwind CSS Production Setup
-- ✅ Removed CDN dependency (`cdn.tailwindcss.com`)
-- ✅ Set up proper Tailwind CSS build process
-- ✅ Created `static/output.css` with essential Tailwind utilities
-- ✅ Added build scripts to `package.json`
-
-### 2. Backend 404 Error
-- ✅ Fixed API URL to use relative paths (`/certificates/<id>`)
-- ✅ Added proper static file serving
-- ✅ Improved error handling and user feedback
-- ✅ Added multiple certificate template routes
+- **Flask Backend**: Clean, production-ready Flask API
+- **Modern UI**: Responsive design with Tailwind CSS
+- **Multiple Templates**: Both simple verification and full certificate views
+- **Production Ready**: Deployed on Vercel with proper build process
+- **No CDN Dependencies**: Built CSS for production
 
 ## 🚀 Quick Start
 
@@ -27,12 +21,12 @@ pip install -r requirements.txt
 npm install
 ```
 
-### 2. Build CSS (Optional)
+### 2. Build CSS
 ```bash
 npm run build:css
 ```
 
-### 3. Run the Application
+### 3. Run Locally
 ```bash
 python app.py
 ```
@@ -44,6 +38,7 @@ The server will start on `http://localhost:5000`
 ### API Endpoints
 - `GET /` - API status
 - `GET /certificates/<cert_id>` - Get certificate data (JSON)
+- `GET /health` - Health check
 
 ### Frontend Pages
 - `GET /cert/<certificate_id>` - Simple certificate verification page
@@ -77,7 +72,7 @@ Visit these URLs to test:
 
 ```
 certificates-backend/
-├── app.py                 # Flask backend
+├── app.py                 # Flask backend (main file)
 ├── index.html            # Simple verification page
 ├── certificate.html      # Full certificate template
 ├── static/
@@ -85,15 +80,35 @@ certificates-backend/
 ├── input.css            # Tailwind input file
 ├── tailwind.config.js   # Tailwind configuration
 ├── package.json         # Node.js dependencies
-└── requirements.txt     # Python dependencies
+├── requirements.txt     # Python dependencies
+└── vercel.json         # Vercel deployment config
 ```
 
 ## 🚀 Deployment
 
-The application is ready for deployment on platforms like:
-- Render (see `render.yaml`)
-- Vercel (see `vercel.json`)
-- Heroku
-- Any Python hosting platform
+### Vercel Deployment
+The application is configured for easy deployment on Vercel:
 
-The built CSS eliminates the Tailwind CDN warning in production. 
+1. **Connect to GitHub**: Your repo is ready for Vercel
+2. **Auto-deploy**: Vercel will automatically build and deploy
+3. **Custom domain**: Easy to add custom domains
+
+### Manual Deployment
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+```
+
+## 🎯 Tech Stack
+
+- **Backend**: Flask (Python)
+- **Frontend**: HTML + Tailwind CSS
+- **Deployment**: Vercel
+- **Build Tool**: Tailwind CSS CLI
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE). 
