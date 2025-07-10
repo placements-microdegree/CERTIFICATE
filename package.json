@@ -1,0 +1,26 @@
+{
+  "name": "certificates-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "npx tailwindcss -i ./input.css -o ./static/output.css --minify",
+    "watch:css": "npx tailwindcss -i ./input.css -o ./static/output.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/habinrahman/certificate-verification.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/habinrahman/certificate-verification/issues"
+  },
+  "homepage": "https://github.com/habinrahman/certificate-verification#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.1.11"
+  }
+}

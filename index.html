@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Certificate Verification</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="/static/output.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
   <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full" id="certificate-card">
@@ -21,14 +21,18 @@
       <p class="text-gray-600 text-center">Completion Date</p>
       <p class="text-md text-center text-gray-800 mt-2" id="completion-date">Loading...</p>
     </div>
+    <div class="mb-6">
+      <p class="text-gray-600 text-center">Certificate ID</p>
+      <p class="text-sm text-center text-gray-500 mt-2" id="certificate-id">Loading...</p>
+    </div>
   </div>
   <script>
     // Get the certificate ID from the URL path (e.g., /cert/123)
     const pathParts = window.location.pathname.split('/').filter(part => part.length > 0);
     const certificateId = pathParts[pathParts.length - 1] || 'test123';
 
-    // Backend API URL
-    const apiUrl = `https://certificate-verification1.onrender.com/certificates/${certificateId}`;
+    // Backend API URL - use relative URL for same domain
+    const apiUrl = `/certificates/${certificateId}`;
 
     console.log('Certificate ID:', certificateId);
     console.log('Fetching from:', apiUrl);
@@ -51,13 +55,14 @@
         document.getElementById("student-name").textContent = data.student_name;
         document.getElementById("course-name").textContent = data.course;
         document.getElementById("completion-date").textContent = data.completion_date;
+        document.getElementById("certificate-id").textContent = data.certificate_id;
       })
       .catch(error => {
         console.error('Fetch error:', error);
         document.getElementById("certificate-card").innerHTML = `
-          <h1 class="text-2xl font-bold text-center text-red-600 mb-4">Error</h1>
-          <p class="text-center text-gray-700">${error.message}</p>
-          <p class="text-center text-sm text-gray-500 mt-2">Please check the console for more details.</p>
+          <h1 class="text-2xl font-bold text-center text-red-600 mb-4">Certificate Not Found</h1>
+          <p class="text-center text-gray-700">The certificate with ID "${certificateId}" could not be found.</p>
+          <p class="text-center text-sm text-gray-500 mt-2">Please check the certificate ID and try again.</p>
         `;
       });
   </script>
