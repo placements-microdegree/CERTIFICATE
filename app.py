@@ -34,11 +34,18 @@ def serve_certificate_page(certificate_id):
 
 @app.route('/certificate/<certificate_id>')
 def serve_certificate_template(certificate_id):
-    # Read the certificate template
-    with open('certificate.html', 'r', encoding='utf-8') as f:
-        html_content = f.read()
-    
-    return html_content
+    try:
+        # Check if certificate.html exists
+        if not os.path.exists('certificate.html'):
+            return f"Error: certificate.html not found. Current directory: {os.getcwd()}, Files: {os.listdir('.')}", 500
+        
+        # Read the certificate template
+        with open('certificate.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        
+        return html_content
+    except Exception as e:
+        return f"Error serving certificate template: {str(e)}", 500
 
 @app.route('/static/<path:filename>')
 def static_files(filename):
