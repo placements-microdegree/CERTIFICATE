@@ -11,7 +11,7 @@ def read_root():
 @app.route('/certificates/<cert_id>')
 def get_certificate(cert_id):
     return {
-        "student_name": "Jane Doe",
+        "student_name": "Habin Rahman",
         "course": "Advanced Python Programming",
         "completion_date": "2024-01-15",
         "certificate_id": cert_id
