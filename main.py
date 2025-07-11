@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from supabase_config import get_certificate_by_id, get_all_certificates
@@ -38,18 +38,11 @@ async def get_certificate(cert_id: str):
         if certificate_data:
             return certificate_data
         else:
-            # Add debugging information
-            return {
-                "error": "Certificate not found",
-                "certificate_id": cert_id,
-                "message": "The certificate with this ID does not exist in the database"
-            }
+            # Always return a JSON error if not found
+            return JSONResponse(status_code=404, content={"error": "Certificate not found"})
     except Exception as e:
-        return {
-            "error": "Database connection error",
-            "certificate_id": cert_id,
-            "message": str(e)
-        }
+        # Always return a JSON error if something goes wrong
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.get("/cert/{certificate_id}")
 async def serve_certificate_page(certificate_id: str):
