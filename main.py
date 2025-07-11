@@ -5,12 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from supabase_config import get_certificate_by_id, get_all_certificates
 
-# Set Supabase environment variables
-if not os.getenv('SUPABASE_URL'):
-    os.environ['SUPABASE_URL'] = 'https://wyszrjhxucxblyvhrktn.supabase.co'
-if not os.getenv('SUPABASE_KEY'):
-    os.environ['SUPABASE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5c3pyamh4dWN4Ymx5dmhya3RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4OTAzNzgsImV4cCI6MjA2NzQ2NjM3OH0.ZEPZIXsIVXbor8vY1uJM9VVVnody5iDJOgabbov14Xw'
-
 app = FastAPI(title="Certificate Verification API", version="1.0.0")
 
 # Add CORS middleware

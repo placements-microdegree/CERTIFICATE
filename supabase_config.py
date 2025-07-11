@@ -2,24 +2,20 @@ import os
 from supabase import create_client, Client
 from typing import Optional
 
-# Load environment variables from .env file
-try:
-    from dotenv import load_dotenv
-    try:
-        load_dotenv(encoding='utf-8')
-    except UnicodeDecodeError:
-        # If .env file has encoding issues, skip it
-        print("Warning: .env file has encoding issues, using environment variables directly")
-except ImportError:
-    print("Warning: python-dotenv not installed. Install with: pip install python-dotenv")
+# Set Supabase environment variables directly
+if not os.getenv('SUPABASE_URL'):
+    os.environ['SUPABASE_URL'] = 'https://wyszrjhxucxblyvhrktn.supabase.co'
+if not os.getenv('SUPABASE_KEY'):
+    os.environ['SUPABASE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5c3pyamh4dWN4Ymx5dmhya3RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4OTAzNzgsImV4cCI6MjA2NzQ2NjM3OH0.ZEPZIXsIVXbor8vY1uJM9VVVnody5iDJOgabbov14Xw'
 
 # Supabase configuration
-SUPABASE_URL = os.getenv('SUPABASE_URL', 'your-supabase-url')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'your-supabase-anon-key')
+SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://wyszrjhxucxblyvhrktn.supabase.co')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5c3pyamh4dWN4Ymx5dmhya3RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4OTAzNzgsImV4cCI6MjA2NzQ2NjM3OH0.ZEPZIXsIVXbor8vY1uJM9VVVnody5iDJOgabbov14Xw')
 
 # Initialize Supabase client
 try:
     supabase: Optional[Client] = create_client(SUPABASE_URL, SUPABASE_KEY)
+    print(f"Supabase client initialized successfully with URL: {SUPABASE_URL}")
 except Exception as e:
     print(f"Warning: Could not initialize Supabase client: {e}")
     supabase = None
