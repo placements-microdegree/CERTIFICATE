@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.py",
+      "src": "main.py",
       "use": "@vercel/python"
     },
     {
@@ -17,7 +17,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "app.py"
+      "dest": "main.py"
     }
   ],
   "buildCommand": "chmod +x build.sh && ./build.sh"
