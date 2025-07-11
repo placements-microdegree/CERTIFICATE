@@ -1,0 +1,49 @@
+Certificate Verification System
+   Project Overview
+
+Name: Certificate Verification System
+Type: Full-stack web application for digital certificate verification
+Technology Stack: FastAPI (Backend) + Tailwind CSS (Frontend) + Supabase (Database) + Vercel (Deployment)
+
+🎯 Purpose & Use Cases
+Primary Use:
+Verify the authenticity of digital certificates issued to students
+Provide instant certificate validation through a web interface
+Enable mobile-friendly certificate verification with QR code support
+
+Target Users:
+Students - To verify their own certificates
+Employers - To validate candidate certificates
+Educational Institutions - To issue and verify certificates
+HR Departments - To authenticate candidate credentials
+
+   Key Features
+Core Functionality:
+✅ Certificate Lookup - Search by unique certificate ID
+✅ Real-time Verification - Instant validation from database
+✅ Dynamic Data Display - Shows student name, course, completion date
+✅ Mobile Responsive - Works on all devices
+✅ Professional UI - Modern, clean interface with animations
+
+Technical Features:
+🔒 Secure API - FastAPI backend with proper error handling
+🗄️ Database Integration - PostgreSQL via Supabase
+   Cloud Deployment - Live on Vercel with GitHub integration
+📱 QR Code Ready - Placeholder for mobile verification
+
+🔗 Live URLs
+Main Site: https://certificate-three-wheat.vercel.app/
+API Endpoint: https://certificate-three-wheat.vercel.app/certificates/HR08
+GitHub Repo: https://github.com/habinrahman/certificate-verification
+
+💼 Business Value
+Prevents Certificate Fraud - Instant verification reduces fake certificates
+Improves Hiring Process - Employers can quickly validate credentials
+Enhances Student Credibility - Students can prove their achievements
+Scalable Solution - Can handle thousands of certificates
+
+   Perfect For
+MicroDegree Students - Verify course completion certificates
+Online Learning Platforms - Issue verifiable certificates
+Corporate Training - Validate employee training completion
+Academic Institutions - Digital certificate management

@@ -348,6 +348,65 @@
       font-size: 0.75rem;
     }
     
+    .certificate-form {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      color: #374151;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    
+    .certificate-input {
+      padding: 1rem 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      font-family: 'Courier New', monospace;
+      background: white;
+      transition: all 0.3s ease;
+    }
+    
+    .certificate-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .verify-btn {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .verify-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px -8px rgba(59, 130, 246, 0.4);
+    }
+    
+    .verify-btn:active {
+      transform: translateY(0);
+    }
+    
     @media (max-width: 768px) {
       .verification-container {
         padding: 1rem;
@@ -442,7 +501,33 @@
   <script>
     // Get the certificate ID from the URL path (e.g., /cert/123)
     const pathParts = window.location.pathname.split('/').filter(part => part.length > 0);
-    const certificateId = pathParts[pathParts.length - 1] || 'test123';
+    const certificateId = pathParts[pathParts.length - 1];
+    
+    // If no certificate ID in URL, show a form to enter one
+    if (!certificateId) {
+      document.getElementById("verification-card").innerHTML = `
+        <div class="verification-header">
+          <div class="verification-icon">🔍</div>
+          <h1 class="verification-title">Certificate Verification</h1>
+          <p class="verification-subtitle">Enter your certificate ID to verify</p>
+        </div>
+        
+        <div class="certificate-form">
+          <div class="form-group">
+            <label for="certificate-input">Certificate ID:</label>
+            <input type="text" id="certificate-input" placeholder="e.g., MD-12345678" class="certificate-input">
+            <button onclick="verifyCertificate()" class="verify-btn">Verify Certificate</button>
+          </div>
+          
+          <div class="verification-note">
+            <p>📝 Enter your certificate ID to verify authenticity</p>
+            <p>🔍 Example: MD-12345678</p>
+            <p>✅ Valid certificates will show verification details</p>
+          </div>
+        </div>
+      `;
+      return;
+    }
 
     // Backend API URL - use relative URL for same domain
     const apiUrl = `/certificates/${certificateId}`;
@@ -499,6 +584,20 @@
           </div>
         `;
       });
+      
+    function verifyCertificate() {
+      const certificateId = document.getElementById('certificate-input').value.trim();
+      if (!certificateId) {
+        alert('Please enter a certificate ID');
+        return;
+      }
+      
+      // Update URL to include certificate ID
+      window.history.pushState({}, '', `/${certificateId}`);
+      
+      // Reload the page to trigger verification
+      window.location.reload();
+    }
   </script>
 </body>
 </html> 
