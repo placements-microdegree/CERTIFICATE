@@ -2,38 +2,39 @@ import os
 from supabase import create_client, Client
 from typing import Optional
 
-# Set Supabase environment variables directly
+# For production, set SUPABASE_URL and SUPABASE_KEY in your deployment platform's environment variables (Vercel/Render).
+# The following fallback is for local development only.
 if not os.getenv('SUPABASE_URL'):
     os.environ['SUPABASE_URL'] = 'https://wyszrjhxucxblyvhrktn.supabase.co'
 if not os.getenv('SUPABASE_KEY'):
     os.environ['SUPABASE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5c3pyamh4dWN4Ymx5dmhya3RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4OTAzNzgsImV4cCI6MjA2NzQ2NjM3OH0.ZEPZIXsIVXbor8vY1uJM9VVVnody5iDJOgabbov14Xw'
 
-# Supabase configuration
-SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://wyszrjhxucxblyvhrktn.supabase.co')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5c3pyamh4dWN4Ymx5dmhya3RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4OTAzNzgsImV4cCI6MjA2NzQ2NjM3OH0.ZEPZIXsIVXbor8vY1uJM9VVVnody5iDJOgabbov14Xw')
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 
-# Initialize Supabase client
-try:
-    supabase: Optional[Client] = create_client(SUPABASE_URL, SUPABASE_KEY)
-    print(f"Supabase client initialized successfully with URL: {SUPABASE_URL}")
-except Exception as e:
-    print(f"Warning: Could not initialize Supabase client: {e}")
-    supabase = None
+supabase: Optional[Client] = None
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print(f"Supabase client initialized successfully with URL: {SUPABASE_URL}")
+    except Exception as e:
+        print(f"Warning: Could not initialize Supabase client: {e}")
+        supabase = None
+else:
+    print("Warning: SUPABASE_URL or SUPABASE_KEY is not set. Supabase client not initialized.")
 
 def get_certificate_by_id(certificate_id: str):
     """Get certificate data from Supabase by certificate ID"""
     if not supabase:
         print("Supabase client not initialized")
         return None
-        
     try:
         response = supabase.table('certificates').select('*').eq('certificate_id', certificate_id).execute()
-        
         if response.data and len(response.data) > 0:
             certificate = response.data[0]
             return {
                 "student_name": certificate['student_name'],
-                "course": certificate['course_name'],
+                "course": certificate['course_name'],  # Fixed field name
                 "completion_date": certificate['completion_date'],
                 "certificate_id": certificate['certificate_id']
             }
@@ -48,7 +49,6 @@ def get_all_certificates():
     if not supabase:
         print("Supabase client not initialized")
         return []
-        
     try:
         response = supabase.table('certificates').select('*').execute()
         return response.data
@@ -61,7 +61,6 @@ def add_sample_data():
     if not supabase:
         print("Supabase client not initialized")
         return
-        
     sample_certificates = [
         {
             "certificate_id": "MD-12345678",
@@ -85,7 +84,6 @@ def add_sample_data():
             "certificate_url": "https://cert.microdegree.work/cert/MD-11223344"
         }
     ]
-    
     try:
         for cert in sample_certificates:
             supabase.table('certificates').insert(cert).execute()
