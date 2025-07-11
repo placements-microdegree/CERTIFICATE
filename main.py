@@ -31,16 +31,19 @@ async def read_root():
 
 @app.get("/certificates/{cert_id}")
 async def get_certificate(cert_id: str):
+    print(f"Received request for certificate_id: {cert_id}")
     """Get certificate data from Supabase by certificate ID"""
     try:
         certificate_data = get_certificate_by_id(cert_id)
-        
+        print(f"Certificate data: {certificate_data}")
         if certificate_data:
             return certificate_data
         else:
+            print("Certificate not found")
             # Always return a JSON error if not found
             return JSONResponse(status_code=404, content={"error": "Certificate not found"})
     except Exception as e:
+        print(f"Exception occurred: {e}")
         # Always return a JSON error if something goes wrong
         return JSONResponse(status_code=500, content={"error": str(e)})
 
