@@ -1,6 +1,13 @@
 from flask import Flask, render_template_string, send_from_directory, request
 from flask_cors import CORS
 import os
+from supabase_config import get_certificate_by_id, get_all_certificates
+
+# Set Supabase environment variables for Vercel deployment
+if not os.getenv('SUPABASE_URL'):
+    os.environ['SUPABASE_URL'] = 'https://wyszrjhxucxblyvhrktn.supabase.co'
+if not os.getenv('SUPABASE_KEY'):
+    os.environ['SUPABASE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5c3pyamh4dWN4Ymx5dmhya3RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4OTAzNzgsImV4cCI6MjA2NzQ2NjM3OH0.ZEPZIXsIVXbor8vY1uJM9VVVnody5iDJOgabbov14Xw'
 
 app = Flask(__name__, static_folder='static')
 CORS(app)
@@ -17,12 +24,13 @@ def read_root():
 
 @app.route('/certificates/<cert_id>')
 def get_certificate(cert_id):
-    return {
-        "student_name": "Habin Rahman",
-        "course": "Advanced Python Programming",
-        "completion_date": "2024-01-15",
-        "certificate_id": cert_id
-    }
+    # Get certificate data from Supabase
+    certificate_data = get_certificate_by_id(cert_id)
+    
+    if certificate_data:
+        return certificate_data
+    else:
+        return {"error": "Certificate not found"}, 404
 
 @app.route('/cert/<certificate_id>')
 def serve_certificate_page(certificate_id):
@@ -56,6 +64,11 @@ def static_files(filename):
 @app.route('/health')
 def health_check():
     return {"status": "healthy", "message": "API is running"}
+
+@app.route('/certificates')
+def get_all_certificates_route():
+    certificates = get_all_certificates()
+    return {"certificates": certificates}
 
 # For Vercel deployment
 if __name__ == '__main__':
