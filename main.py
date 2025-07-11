@@ -32,12 +32,24 @@ async def read_root():
 @app.get("/certificates/{cert_id}")
 async def get_certificate(cert_id: str):
     """Get certificate data from Supabase by certificate ID"""
-    certificate_data = get_certificate_by_id(cert_id)
-    
-    if certificate_data:
-        return certificate_data
-    else:
-        raise HTTPException(status_code=404, detail="Certificate not found")
+    try:
+        certificate_data = get_certificate_by_id(cert_id)
+        
+        if certificate_data:
+            return certificate_data
+        else:
+            # Add debugging information
+            return {
+                "error": "Certificate not found",
+                "certificate_id": cert_id,
+                "message": "The certificate with this ID does not exist in the database"
+            }
+    except Exception as e:
+        return {
+            "error": "Database connection error",
+            "certificate_id": cert_id,
+            "message": str(e)
+        }
 
 @app.get("/cert/{certificate_id}")
 async def serve_certificate_page(certificate_id: str):
@@ -59,6 +71,17 @@ async def get_all_certificates_route():
 async def health_check():
     """Health check endpoint"""
     return {"status": "healthy", "message": "API is running"}
+
+@app.get("/debug")
+async def debug_info():
+    """Debug endpoint to check environment and connection"""
+    import os
+    return {
+        "supabase_url_set": bool(os.getenv('SUPABASE_URL')),
+        "supabase_key_set": bool(os.getenv('SUPABASE_KEY')),
+        "supabase_url": os.getenv('SUPABASE_URL', 'Not set'),
+        "environment": os.getenv('VERCEL_ENV', 'local')
+    }
 
 if __name__ == "__main__":
     import uvicorn
