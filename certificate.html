@@ -35,7 +35,7 @@
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     const certificateId = pathParts[pathParts.length - 1];
     // Use your deployed backend URL here:
-    const apiUrl = "https://certificate-awflnjwy3-habins-projects-2ddf3087.vercel.app/certificates/" + certificateId;
+            const apiUrl = "https://certificate-verification1.onrender.com/certificates/" + certificateId;
 
     bg.onload = function() {
       fetch(apiUrl)
