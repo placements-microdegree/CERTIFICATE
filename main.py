@@ -10,7 +10,10 @@ app = FastAPI(title="Certificate Verification API", version="1.0.0")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://your-actual-vercel-frontend-url.vercel.app",  # Replace with your actual Vercel URL
+        "http://localhost:5000"  # local testing
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -49,13 +52,31 @@ async def get_certificate(cert_id: str):
 
 @app.get("/cert/{certificate_id}")
 async def serve_certificate_page(certificate_id: str):
-    """Serve the certificate template"""
+    """Serve the certificate template with dynamic data"""
+    from fastapi.responses import HTMLResponse
+    from supabase_config import get_certificate_by_id
     try:
-        with open('certificate.html', 'r', encoding='utf-8') as f:
+        with open("certificate.html", "r", encoding="utf-8") as f:
             html_content = f.read()
+        cert_data = get_certificate_by_id(certificate_id)
+        if not cert_data:
+            return HTMLResponse(
+                content="<h2 style='text-align:center;color:#b91c1c;margin-top:3em'>Certificate Not Found</h2>",
+                status_code=404,
+            )
+        # Replace placeholders
+        html_content = (
+            html_content.replace("{{student_name}}", cert_data["student_name"])
+            .replace("{{course_name}}", cert_data["course"])
+            .replace("{{completion_date}}", cert_data["completion_date"])
+            .replace("{{certificate_id}}", cert_data["certificate_id"])
+        )
         return HTMLResponse(content=html_content)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error serving certificate page: {str(e)}")
+        return HTMLResponse(
+            content=f"<h2 style='text-align:center;color:#b91c1c;margin-top:3em'>Error: {str(e)}</h2>",
+            status_code=500,
+        )
 
 @app.get("/certificates")
 async def get_all_certificates_route():
