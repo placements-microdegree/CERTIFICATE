@@ -26,113 +26,52 @@
   <canvas id="certificate" width="1200" height="850"></canvas>
   <div id="error" class="error" style="display:none"></div>
   <script>
-    // Helper to load Google Fonts for canvas
-    function loadFont(font, url) {
-      const fontFace = new FontFace(font, `url(${url})`);
-      return fontFace.load().then(function(loaded) {
-        document.fonts.add(loaded);
-      });
-    }
-
-    // Extract certificate_id from URL (assumes /cert/{certificate_id})
-    const pathParts = window.location.pathname.split('/').filter(Boolean);
-    const certificateId = pathParts[pathParts.length - 1];
-    const apiUrl = `${window.location.origin}/certificates/${certificateId}`;
-
     const canvas = document.getElementById("certificate");
     const ctx = canvas.getContext("2d");
     const bg = new Image();
     bg.src = "/static/template.jpg.png";
 
-    // Gold color from template
-    const gold = "#b8860b";
+    // Extract certificate_id from URL
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const certificateId = pathParts[pathParts.length - 1];
+    const apiUrl = `${window.location.origin}/certificates/${certificateId}`;
 
-    function drawCertificate(data) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+    bg.onload = function() {
+      fetch(apiUrl)
+        .then(resp => {
+          if (!resp.ok) throw new Error('Certificate not found');
+          return resp.json();
+        })
+        .then(data => {
+          ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
-      // CERTIFICATE OF COMPLETION (gold, serif, uppercase)
-      ctx.font = "700 44px 'EB Garamond', serif";
-      ctx.fillStyle = gold;
-      ctx.textAlign = "center";
-      ctx.fillText("CERTIFICATE OF COMPLETION", canvas.width / 2, 180);
+          // Name
+          ctx.fillStyle = "black";
+          ctx.font = "bold 38px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(data.student_name, canvas.width / 2, 330);
 
-      // THIS CERTIFICATE IS AWARDED TO (black, bold, uppercase)
-      ctx.font = "bold 28px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = "#222";
-      ctx.fillText("THIS CERTIFICATE IS AWARDED TO", canvas.width / 2, 240);
+          // Course (move down for spacing)
+          ctx.font = "bold 30px Arial";
+          ctx.fillText(data.course, canvas.width / 2, 380);
 
-      // Student Name (gold, bold, large)
-      ctx.font = "700 38px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = gold;
-      ctx.fillText(data.student_name, canvas.width / 2, 310);
+          // Issued Date (above the left black line, black color)
+          ctx.font = "18px Arial";
+          ctx.fillStyle = "black";
+          ctx.textAlign = "left";
+          ctx.fillText(data.completion_date, 260, 580); // Try 622 for subtle adjustment
 
-      // For Successfully Completing... (black)
-      ctx.font = "24px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = "#222";
-      ctx.fillText("For Successfully Completing Online Live Course on", canvas.width / 2, 370);
-
-      // Course Name (black, bold, larger)
-      ctx.font = "bold 32px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = "#222";
-      ctx.fillText(data.course, canvas.width / 2, 420);
-
-      // Signature (skip, as it's in the template image)
-
-      // ISSUED DATE (gold, all-caps, left)
-      ctx.font = "bold 18px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = gold;
-      ctx.textAlign = "left";
-      ctx.fillText("ISSUED DATE", 120, 670);
-      ctx.font = "22px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = "#222";
-      ctx.fillText(data.completion_date, 120, 700);
-
-      // MANIKANTA NAIR (gold, all-caps, center)
-      ctx.font = "bold 18px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = gold;
-      ctx.textAlign = "center";
-      ctx.fillText("MANIKANTA NAIR", canvas.width / 2, 670);
-      ctx.font = "16px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = "#222";
-      ctx.fillText("CO-FOUNDER", canvas.width / 2, 690);
-
-      // CERTIFICATE NO (gold, all-caps, right)
-      ctx.font = "bold 18px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = gold;
-      ctx.textAlign = "right";
-      ctx.fillText("CERTIFICATE NO", 1080, 670);
-      ctx.font = "22px 'Montserrat', Arial, sans-serif";
-      ctx.fillStyle = "#222";
-      ctx.fillText(data.certificate_id, 1080, 700);
-    }
-
-    function showError(msg) {
-      document.getElementById('error').textContent = msg;
-      document.getElementById('error').style.display = '';
-      canvas.style.display = 'none';
-    }
-
-    // Load fonts, then background, then fetch data
-    Promise.all([
-      loadFont('EB Garamond', 'https://fonts.gstatic.com/s/ebgaramond/v27/SlGUmQSNjdsmc35JDF1K5GR1SDk.woff2'),
-      loadFont('Montserrat', 'https://fonts.gstatic.com/s/montserrat/v26/JTUQjIg1_i6t8kCHKm459WxZqh7k29Y.woff2')
-    ]).then(() => {
-      bg.onload = () => {
-        fetch(apiUrl)
-          .then(resp => {
-            if (!resp.ok) throw new Error('Certificate not found');
-            return resp.json();
-          })
-          .then(data => {
-            drawCertificate(data);
-          })
-          .catch(err => {
-            showError('❌ ' + err.message);
-          });
-      };
-      if (bg.complete) bg.onload();
-    });
+          // Certificate No (above the right black line, black color)
+          ctx.textAlign = "right";
+          ctx.fillText(data.certificate_id, 950, 580); // Try 622 for subtle adjustment
+        })
+        .catch(err => {
+          ctx.fillStyle = "red";
+          ctx.font = "bold 30px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText("Error loading certificate data", canvas.width / 2, canvas.height / 2);
+        });
+    };
   </script>
 </body>
 </html>
