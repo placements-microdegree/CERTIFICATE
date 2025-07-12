@@ -11,7 +11,7 @@ app = FastAPI(title="Certificate Verification API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://your-actual-vercel-frontend-url.vercel.app",  # Replace with your actual Vercel URL
+        "https://certificate-awflnjwy3-habins-projects-2ddf3087.vercel.app",  # Your actual Vercel frontend
         "http://localhost:5000"  # local testing
     ],
     allow_credentials=True,
