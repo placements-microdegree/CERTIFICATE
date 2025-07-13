@@ -2,8 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "main.py",
-      "use": "@vercel/python"
+      "src": "*.html",
+      "use": "@vercel/static"
     },
     {
       "src": "static/**",
@@ -17,8 +17,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "main.py"
+      "dest": "/index.html"
     }
-  ],
-  "buildCommand": "chmod +x build.sh && ./build.sh"
+  ]
 } 
