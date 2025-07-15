@@ -505,7 +505,7 @@
     
     console.log('Path parts:', pathParts);
     console.log('Certificate ID:', certificateId);
-    
+
     // If no certificate ID in URL or we're at root, show a form to enter one
     if (!certificateId || certificateId === '' || window.location.pathname === '/') {
       document.getElementById("verification-card").innerHTML = `
