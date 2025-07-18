@@ -24,6 +24,16 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def read_root():
+    """Serve the verification portal"""
+    try:
+        with open('index.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error serving verification portal: {str(e)}")
+
+@app.get("/home")
+async def home_page():
     """Serve the home page"""
     try:
         with open('home.html', 'r', encoding='utf-8') as f:
