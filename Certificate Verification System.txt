@@ -47,3 +47,8 @@ MicroDegree Students - Verify course completion certificates
 Online Learning Platforms - Issue verifiable certificates
 Corporate Training - Validate employee training completion
 Academic Institutions - Digital certificate management
+
+ Live Application URLs:
+✅ Main Verification Portal: https://certificate-verification-ecru.vercel.app/
+✅ Certificate Display: https://certificate-verification-ecru.vercel.app/cert/HR08
+✅ API Endpoint: https://certificate-verification-ecru.vercel.app/certificates/HR08

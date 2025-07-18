@@ -407,6 +407,45 @@
       transform: translateY(0);
     }
     
+    .certificate-form {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      color: #6b7280;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    
+    .certificate-input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+    }
+    
+    .certificate-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
     @media (max-width: 768px) {
       .verification-container {
         padding: 1rem;
@@ -501,7 +540,7 @@
   <script>
     // Get the certificate ID from the URL path (e.g., /cert/123 or /123)
     const pathParts = window.location.pathname.split('/').filter(part => part.length > 0);
-    let certificateId = pathParts[pathParts.length - 1];
+    let certificateId = null;
     
     // Handle different URL patterns: /cert/HR08, /HR08, etc.
     if (pathParts.length >= 2 && pathParts[pathParts.length - 2] === 'cert') {
@@ -514,7 +553,7 @@
     console.log('Certificate ID:', certificateId);
 
     // If no certificate ID in URL or we're at root, show a form to enter one
-    if (!certificateId || certificateId === '' || window.location.pathname === '/' || certificateId === 'index.html') {
+    if (!certificateId || certificateId === '' || window.location.pathname === '/' || certificateId === 'index.html' || pathParts.length === 0) {
       document.getElementById("verification-card").innerHTML = `
         <div class="verification-header">
           <div class="verification-icon">🔍</div>
