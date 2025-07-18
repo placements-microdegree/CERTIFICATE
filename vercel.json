@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "main.py",
+      "src": "vercel_app.py",
       "use": "@vercel/python"
     },
     {
@@ -20,8 +20,20 @@
       "dest": "/static/$1"
     },
     {
+      "src": "/certificates/(.*)",
+      "dest": "/vercel_app.py"
+    },
+    {
+      "src": "/health",
+      "dest": "/vercel_app.py"
+    },
+    {
+      "src": "/cert/(.*)",
+      "dest": "/vercel_app.py"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/main.py"
+      "dest": "/vercel_app.py"
     }
   ]
 } 
