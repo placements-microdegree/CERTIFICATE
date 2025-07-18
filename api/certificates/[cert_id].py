@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-@app.get("/api/certificates/{cert_id}")
+@app.get("/{cert_id}")
 async def get_certificate(cert_id: str):
     cert = get_certificate_by_id(cert_id)
     if cert:
