@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "main.py",
+      "use": "@vercel/python"
+    },
+    {
       "src": "*.html",
       "use": "@vercel/static"
     },
@@ -17,7 +21,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/main.py"
     }
   ]
 } 

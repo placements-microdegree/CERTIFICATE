@@ -24,13 +24,23 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def read_root():
+    """Serve the home page"""
+    try:
+        with open('home.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error serving home page: {str(e)}")
+
+@app.get("/verify")
+async def verification_portal():
     """Serve the verification portal"""
     try:
         with open('index.html', 'r', encoding='utf-8') as f:
             html_content = f.read()
         return HTMLResponse(content=html_content)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error serving index page: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error serving verification portal: {str(e)}")
 
 @app.get("/certificates/{cert_id}")
 async def get_certificate(cert_id: str):
@@ -102,4 +112,6 @@ async def debug_info():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000) 
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    uvicorn.run(app, host="0.0.0.0", port=port) 
