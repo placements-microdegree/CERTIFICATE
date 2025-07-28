@@ -94,3 +94,8 @@ Current Production Deployment:
 🌐 Custom Domain: https://certificate-three-wheat.vercel.app/
 📄 Certificate Display: https://certificate-three-wheat.vercel.app/cert/HR08
 🔧 API Endpoint: https://certificate-three-wheat.vercel.app/api/certificate/HR08
+
+Direct Test URLs:
+https://certificate-three-wheat.vercel.app/HR08
+https://certificate-three-wheat.vercel.app/test123
+https://certificate-three-wheat.vercel.app/CERT-001
