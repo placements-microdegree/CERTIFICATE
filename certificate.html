@@ -37,7 +37,7 @@
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     const certificateId = pathParts[pathParts.length - 1];
     // Use local server URL:
-    const apiUrl = "/certificates/" + certificateId;
+    const apiUrl = "/api/certificate/" + certificateId;
 
     bg.onload = function() {
       fetch(apiUrl)
@@ -45,30 +45,33 @@
           if (!resp.ok) throw new Error('Certificate not found');
           return resp.json();
         })
-        .then(function(data) {
+        .then(function(response) {
+          // Extract certificate data from the API response
+          const data = response.success ? response.certificate : response;
+          
           document.fonts.load('700 38px Cinzel').then(function() {
             ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
-            // Name
+            // Name - use recipient_name from new API or student_name from old format
             ctx.fillStyle = "black";
             ctx.font = "700 38px Cinzel, serif";
             ctx.textAlign = "center";
-            ctx.fillText(data.student_name, canvas.width / 2, 360);
+            ctx.fillText(data.recipient_name || data.student_name, canvas.width / 2, 360);
 
-            // Course name (drawn below the completion text)
+            // Course name - use course_name from new API or course from old format
             ctx.fillStyle = "black";
             ctx.font = "700 30px Cinzel, serif";
             ctx.textAlign = "center";
-            ctx.fillText(data.course, canvas.width / 2, 480);
+            ctx.fillText(data.course_name || data.course, canvas.width / 2, 480);
 
-            // Issued Date (above the left black line, black color)
+            // Issued Date - use issue_date from new API or completion_date from old format
             ctx.font = "700 18px Cinzel, serif";
             ctx.textAlign = "left";
-            ctx.fillText(data.completion_date, 260, 580);
+            ctx.fillText(data.issue_date || data.completion_date, 260, 580);
 
             // Certificate No (above the right black line, black color)
             ctx.textAlign = "right";
-            ctx.fillText(data.certificate_id, 950, 580);
+            ctx.fillText(data.id || data.certificate_id, 950, 580);
           });
         })
         .catch(function(err) {

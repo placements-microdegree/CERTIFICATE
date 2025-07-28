@@ -7,8 +7,12 @@
   ],
   "routes": [
     { "src": "/static/(.*)", "dest": "/static/$1" },
-    { "src": "/certificates/(.*)", "dest": "/api/certificates/$1" },
+    { "src": "/api/certificate/(.*)", "dest": "/vercel_app.py" },
     { "src": "/cert/(.*)", "dest": "/vercel_app.py" },
+    { "src": "/health", "dest": "/vercel_app.py" },
+    { "src": "/debug(.*)", "dest": "/vercel_app.py" },
+    { "src": "/home", "dest": "/vercel_app.py" },
+    { "src": "/test", "dest": "/vercel_app.py" },
     { "src": "/(.*)", "dest": "/vercel_app.py" }
   ]
-} 
+}

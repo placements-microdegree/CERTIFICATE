@@ -26,6 +26,41 @@ else:
 # Mock data for testing when database is empty
 MOCK_CERTIFICATES = [
     {
+        "certificate_id": "CERT-001",
+        "student_name": "Habin Rahman",
+        "course_name": "ReactJS with Supabase",
+        "completion_date": "2025-07-07",
+        "certificate_url": "https://cert.microdegree.work/cert/CERT-001"
+    },
+    {
+        "certificate_id": "HR08",
+        "student_name": "HABIN",
+        "course_name": "PYTHON",
+        "completion_date": "2025-07-11",
+        "certificate_url": "https://cert.microdegree.work/cert/HR08"
+    },
+    {
+        "certificate_id": "test123",
+        "student_name": "Michael Chen",
+        "course_name": "Data Science Essentials",
+        "completion_date": "2024-03-10",
+        "certificate_url": "https://cert.microdegree.work/cert/test123"
+    },
+    {
+        "certificate_id": "CERT-002",
+        "student_name": "Habin Rahman",
+        "course_name": "FastAPI Advanced",
+        "completion_date": "2025-07-08",
+        "certificate_url": "https://cert.microdegree.work/cert/CERT-002"
+    },
+    {
+        "certificate_id": "RK01",
+        "student_name": "RAKESH",
+        "course_name": "SQL",
+        "completion_date": "2025-07-11",
+        "certificate_url": "https://cert.microdegree.work/cert/RK01"
+    },
+    {
         "certificate_id": "MD-12345678",
         "student_name": "Habin Rahman",
         "course_name": "Advanced Python Programming",
@@ -38,25 +73,13 @@ MOCK_CERTIFICATES = [
         "course_name": "Web Development Fundamentals",
         "completion_date": "2024-02-20",
         "certificate_url": "https://cert.microdegree.work/cert/MD-87654321"
-    },
-    {
-        "certificate_id": "MD-11223344",
-        "student_name": "Michael Chen",
-        "course_name": "Data Science Essentials",
-        "completion_date": "2024-03-10",
-        "certificate_url": "https://cert.microdegree.work/cert/MD-11223344"
-    },
-    {
-        "certificate_id": "HR08",
-        "student_name": "John Doe",
-        "course_name": "Full Stack Development",
-        "completion_date": "2024-04-15",
-        "certificate_url": "https://cert.microdegree.work/cert/HR08"
     }
 ]
 
 def get_certificate_by_id(certificate_id: str):
     """Get certificate data from Supabase by certificate ID"""
+    global supabase
+    
     if not supabase:
         print("Supabase client not initialized, using mock data")
         # Use mock data as fallback
@@ -71,37 +94,48 @@ def get_certificate_by_id(certificate_id: str):
         return None
     
     try:
+        print(f"Attempting to fetch certificate {certificate_id} from Supabase...")
         response = supabase.table('certificates').select('*').eq('certificate_id', certificate_id).execute()
+        print(f"Supabase response: {response}")
+        
         if response.data and len(response.data) > 0:
             certificate = response.data[0]
+            print(f"Found certificate in database: {certificate}")
             return {
                 "student_name": certificate['student_name'],
-                "course": certificate['course_name'],  # Fixed field name
+                "course": certificate['course_name'],
                 "completion_date": certificate['completion_date'],
                 "certificate_id": certificate['certificate_id']
             }
         else:
-            # Fallback to mock data if not found in database
-            for cert in MOCK_CERTIFICATES:
-                if cert['certificate_id'] == certificate_id:
-                    return {
-                        "student_name": cert['student_name'],
-                        "course": cert['course_name'],
-                        "completion_date": cert['completion_date'],
-                        "certificate_id": cert['certificate_id']
-                    }
+            print(f"Certificate {certificate_id} not found in database")
             return None
     except Exception as e:
-        print(f"Error fetching certificate: {e}")
-        # Use mock data as fallback
-        for cert in MOCK_CERTIFICATES:
-            if cert['certificate_id'] == certificate_id:
+        print(f"Error fetching certificate from Supabase: {e}")
+        print("Attempting to reconnect to Supabase...")
+        
+        # Try to reinitialize the Supabase client
+        try:
+            if SUPABASE_URL and SUPABASE_KEY:
+                supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+                print("Supabase client reinitialized successfully")
+            else:
+                print("Cannot reconnect: SUPABASE_URL or SUPABASE_KEY is None")
+                return None
+            
+            # Try the query again
+            response = supabase.table('certificates').select('*').eq('certificate_id', certificate_id).execute()
+            if response.data and len(response.data) > 0:
+                certificate = response.data[0]
                 return {
-                    "student_name": cert['student_name'],
-                    "course": cert['course_name'],
-                    "completion_date": cert['completion_date'],
-                    "certificate_id": cert['certificate_id']
+                    "student_name": certificate['student_name'],
+                    "course": certificate['course_name'],
+                    "completion_date": certificate['completion_date'],
+                    "certificate_id": certificate['certificate_id']
                 }
+        except Exception as reconnect_error:
+            print(f"Failed to reconnect to Supabase: {reconnect_error}")
+        
         return None
 
 def get_all_certificates():

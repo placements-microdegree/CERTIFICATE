@@ -1,0 +1,67 @@
+Certificate Verification System Codebase
+This is a certificate verification backend system built by Habin Rahman using modern web technologies. Here's a comprehensive breakdown:
+
+🏗️ Architecture Overview
+Backend: FastAPI-based REST API with Supabase database integration
+Frontend: Modern responsive UI using Tailwind CSS
+Deployment: Multi-platform support (Vercel, Render)
+
+📁 Key Components
+Core Application Files
+main.py
+ - FastAPI application with API endpoints and route handlers
+supabase_config.py
+ - Database configuration and certificate data operations
+home.html
+ - Landing page with modern gradient design
+index.html
+ - Certificate verification portal
+certificate.html
+ - Certificate display template
+API Endpoints
+GET / - Serves the verification portal
+GET /home - Serves the landing page
+GET /api/certificates/{cert_id} - Returns certificate data as JSON
+GET /certificate/{certificate_id} - Displays formatted certificate
+GET /health - Health check endpoint
+GET /debug - Debug information for troubleshooting
+Database Integration
+Supabase as the primary database
+Mock data fallback for testing when database is unavailable
+Certificate storage with fields: ID, student name, course, issue date, etc.
+Frontend Features
+Responsive design with Tailwind CSS
+Modern UI with gradient backgrounds and animations
+Certificate verification by ID input
+Static asset serving from /static directory
+🚀 Deployment Configuration
+Vercel: 
+vercel.json
+, 
+vercel_app.py
+c:\Users\habin\certificates-backend\vercel_app.py
+
+Render: 
+render.yaml
+, 
+Procfile
+
+Build process: 
+build.sh
+, 
+package.json
+c:\Users\habin\certificates-backend\package.json
+ for Tailwind CSS compilation
+
+🔧 Development Setup
+The project includes:
+
+Python dependencies: 
+requirements.txt
+Node.js dependencies: 
+package.json
+ (for Tailwind CSS)
+Environment configuration: Supabase URL and API keys
+Sample data scripts: 
+add_sample_data.py
+This is a production-ready certificate verification system with a clean, modern interface and robust backend architecture.

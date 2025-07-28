@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Certificate Verification Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: API Endpoint Direct Test</h2>
+        <button onclick="testAPI()">Test API: /certificates/CERT-001</button>
+        <div id="api-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Manual Certificate Verification</h2>
+        <input type="text" id="cert-id" placeholder="Enter Certificate ID" value="CERT-001">
+        <button onclick="verifyCert()">Verify Certificate</button>
+        <div id="verify-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Server Health Check</h2>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="health-result" class="result"></div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.textContent = 'Testing API endpoint...';
+            
+            try {
+                const response = await fetch('/certificates/CERT-001');
+                const data = await response.json();
+                resultDiv.textContent = `Status: ${response.status}\nData: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+        
+        async function verifyCert() {
+            const certId = document.getElementById('cert-id').value.trim();
+            const resultDiv = document.getElementById('verify-result');
+            
+            if (!certId) {
+                resultDiv.textContent = 'Please enter a certificate ID';
+                return;
+            }
+            
+            resultDiv.textContent = 'Verifying certificate...';
+            
+            try {
+                const response = await fetch(`/certificates/${certId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Certificate not found`);
+                }
+                const data = await response.json();
+                resultDiv.textContent = `Certificate Found!\nStudent: ${data.student_name}\nCourse: ${data.course_name}\nDate: ${data.completion_date}\nID: ${data.certificate_id}`;
+            } catch (error) {
+                resultDiv.textContent = `Verification Failed: ${error.message}`;
+            }
+        }
+        
+        async function testHealth() {
+            const resultDiv = document.getElementById('health-result');
+            resultDiv.textContent = 'Testing health endpoint...';
+            
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                resultDiv.textContent = `Status: ${response.status}\nHealth: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

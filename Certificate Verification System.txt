@@ -52,3 +52,45 @@ Academic Institutions - Digital certificate management
 ✅ Main Verification Portal: https://certificate-verification-ecru.vercel.app/
 ✅ Certificate Display: https://certificate-verification-ecru.vercel.app/cert/HR08
 ✅ API Endpoint: https://certificate-verification-ecru.vercel.app/certificates/HR08
+
+
+
+
+http://localhost:5000/cert/HR08 - HABIN's Python Certificate
+http://localhost:5000/cert/test123 - Michael Chen's Data Science Certificate
+http://localhost:5000/cert/CERT-001 - Habin Rahman's ReactJS Certificate
+
+
+🌐 Main Application URLs
+Primary Pages:
+🏠 Home Page: http://localhost:5000/home
+🔍 Verification Portal: http://localhost:5000/ (main verification page)
+🧪 Test Page: http://localhost:5000/test
+API Endpoints:
+📜 Get Certificate: http://localhost:5000/api/certificate/{cert_id}
+🏥 Health Check: http://localhost:5000/health
+🔧 Debug Info: http://localhost:5000/debug
+📊 Debug All Certs: http://localhost:5000/debug/all-certs
+Certificate Display:
+📄 Certificate Page: http://localhost:5000/certificate/{cert_id}
+🔗 Direct Verification: http://localhost:5000/{cert_id} (auto-verifies)
+Static Assets:
+📁 Static Files: http://localhost:5000/static/
+🧪 Test Certificate IDs:
+test123 - Michael Chen (Data Science Essentials)
+CERT-001 - Habin Rahman (ReactJS with Supabase)
+HR08 - HABIN (PYTHON)
+🎯 Quick Test URLs:
+Direct verification: http://localhost:5000/test123
+API test: http://localhost:5000/api/certificate/test123
+Certificate display: http://localhost:5000/certificate/test123
+🌍 Browser Preview:
+Current preview: http://127.0.0.1:62540 (proxy to localhost:5000)
+
+
+🌐 Your Live Production URLs:
+Current Production Deployment:
+🔍 Verification Portal: https://certificate-czlvnefi0-habins-projects-2ddf3087.vercel.app/
+🌐 Custom Domain: https://certificate-three-wheat.vercel.app/
+📄 Certificate Display: https://certificate-three-wheat.vercel.app/cert/HR08
+🔧 API Endpoint: https://certificate-three-wheat.vercel.app/api/certificate/HR08

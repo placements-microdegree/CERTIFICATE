@@ -25,7 +25,7 @@ try:
     # Test connection by trying to access a table
     try:
         response = supabase.table('certificates').select('*').limit(1).execute()
-        print(f"✅ Connected to Supabase database!")
+        print("✅ Connected to Supabase database!")
         print(f"📊 Found {len(response.data)} certificates")
         
         if len(response.data) == 0:

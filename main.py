@@ -52,7 +52,17 @@ async def verification_portal():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error serving verification portal: {str(e)}")
 
-@app.get("/certificates/{cert_id}")
+@app.get("/test")
+async def test_page():
+    """Serve the test page for debugging"""
+    try:
+        with open('test.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error serving test page: {str(e)}")
+
+@app.get("/api/certificate/{cert_id}")
 async def get_certificate(cert_id: str):
     print(f"Received request for certificate_id: {cert_id}")
     """Get certificate data from Supabase by certificate ID"""
@@ -60,15 +70,22 @@ async def get_certificate(cert_id: str):
         certificate_data = get_certificate_by_id(cert_id)
         print(f"Certificate data: {certificate_data}")
         if certificate_data:
-            return certificate_data
+            return {"success": True, "certificate": {
+                "id": certificate_data["certificate_id"],
+                "recipient_name": certificate_data["student_name"],
+                "course_name": certificate_data["course"],
+                "issue_date": certificate_data["completion_date"],
+                "issuer": "MicroDegree Academy"
+            }}
         else:
             print("Certificate not found")
-            # Always return a JSON error if not found
-            return JSONResponse(status_code=404, content={"error": "Certificate not found"})
+            return {"success": False, "message": "Certificate not found"}
     except Exception as e:
         print(f"Exception occurred: {e}")
         # Always return a JSON error if something goes wrong
         return JSONResponse(status_code=500, content={"error": str(e)})
+
+
 
 @app.get("/cert/{certificate_id}")
 async def serve_certificate_page(certificate_id: str):
@@ -87,7 +104,7 @@ async def serve_certificate_page(certificate_id: str):
         # Replace placeholders
         html_content = (
             html_content.replace("{{student_name}}", cert_data["student_name"])
-            .replace("{{course_name}}", cert_data["course"])
+            .replace("{{course_name}}", cert_data["course"])  # Fixed: use 'course' not 'course_name'
             .replace("{{completion_date}}", cert_data["completion_date"])
             .replace("{{certificate_id}}", cert_data["certificate_id"])
         )
@@ -119,6 +136,27 @@ async def debug_info():
         "supabase_url": os.getenv('SUPABASE_URL', 'Not set'),
         "environment": os.getenv('VERCEL_ENV', 'local')
     }
+
+@app.get("/debug/certificates")
+async def debug_all_certs():
+    from supabase_config import supabase
+    if not supabase:
+        return {"error": "Supabase client not initialized"}
+    try:
+        response = supabase.table('certificates').select('*').execute()
+        return response.data
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/{certificate_id}")
+async def serve_verification_page(certificate_id: str):
+    """Serve the verification page with certificate data for direct certificate ID access"""
+    try:
+        with open('index.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error serving verification page: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

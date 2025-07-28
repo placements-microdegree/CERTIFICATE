@@ -47,7 +47,7 @@ FLASK_DEBUG=True
     try:
         from supabase_config import get_all_certificates
         certificates = get_all_certificates()
-        print(f"✅ Successfully connected to Supabase!")
+        print("✅ Successfully connected to Supabase!")
         print(f"📊 Found {len(certificates)} certificates in database")
     except Exception as e:
         print(f"❌ Error connecting to Supabase: {e}")
