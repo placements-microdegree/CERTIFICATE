@@ -11,13 +11,15 @@ app = FastAPI(title="Certificate Verification API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://certificate-awflnjwy3-habins-projects-2ddf3087.vercel.app",
+        "https://certificate-verification-ecru.vercel.app",
+        "https://certificate-three-wheat.vercel.app",
         "http://localhost:5000"
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Serve static assets (CSS, images, etc.)
 app.mount("/static", StaticFiles(directory="static"), name="static")
