@@ -1,86 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MicroDegree Certificate</title>
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-  <link href="
-  https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Cinzel', serif;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
       text-align: center;
-      background: #f0f0f0;
     }
-    canvas {
-      border: 1px solid #ccc;
-      margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .certificate {
+      margin: 40px auto;
       background: #fff;
+      padding: 30px;
+      width: 85%;
+      border: 6px double #333;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.15);
     }
-    .error {
-      color: #b91c1c;
-      font-size: 1.5rem;
-      margin-top: 2em;
+    h1 {
+      color: #1d4ed8;
+    }
+    .meta {
+      color: #444;
+      font-size: 1.1em;
+      margin-bottom: 1.5em;
+    }
+    .actions {
+      margin-top: 20px;
+    }
+    button {
+      margin: 6px;
+      padding: 10px 15px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #1e40af;
+    }
+    #qrcode {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <canvas id="certificate" width="1200" height="850"></canvas>
-  <div id="error" class="error" style="display:none"></div>
+
+  <div class="certificate" id="certificate-content">
+    <h1>Certificate of Completion</h1>
+    <p>This is to certify that <strong>{{student_name}}</strong></p>
+    <p>has successfully completed the course <strong>{{course_name}}</strong></p>
+    <p class="meta">Date of Completion: <strong>{{completion_date}}</strong></p>
+    <p class="meta">Certificate ID: <strong>{{certificate_id}}</strong></p>
+  </div>
+
+  <div class="actions">
+    <button onclick="copyLink()">📋 Copy Link</button>
+    <button onclick="shareWhatsApp()">📲 Share</button>
+    <button onclick="downloadPDF()">🧾 Download PDF</button>
+  </div>
+
+  <div id="qrcode"></div>
+
+  <!-- JS LIBRARIES -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <script>
-    const canvas = document.getElementById("certificate");
-    const ctx = canvas.getContext("2d");
-    const bg = new Image();
-    bg.src = "/static/template.jpg.png";
+    const certId = "{{certificate_id}}";
+    const baseUrl = "https://certificate-verification-backend-6r7x.onrender.com";
+    const certUrl = `${baseUrl}/cert/${certId}`;
 
-    // Extract certificate_id from URL
-    const pathParts = window.location.pathname.split('/').filter(Boolean);
-    const certificateId = pathParts[pathParts.length - 1];
-    // Use local server URL:
-    const apiUrl = "/api/certificate/" + certificateId;
+    function copyLink() {
+      navigator.clipboard.writeText(certUrl);
+      alert("🔗 Link copied: " + certUrl);
+    }
 
-    bg.onload = function() {
-      fetch(apiUrl)
-        .then(function(resp) {
-          if (!resp.ok) throw new Error('Certificate not found');
-          return resp.json();
-        })
-        .then(function(response) {
-          // Extract certificate data from the API response
-          const data = response.success ? response.certificate : response;
-          
-          document.fonts.load('700 38px Cinzel').then(function() {
-            ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+    function shareWhatsApp() {
+      const message = `🎓 Here's my verified certificate from MicroDegree:\n${certUrl}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    }
 
-            // Name - use recipient_name from new API or student_name from old format
-            ctx.fillStyle = "black";
-            ctx.font = "700 38px Cinzel, serif";
-            ctx.textAlign = "center";
-            ctx.fillText(data.recipient_name || data.student_name, canvas.width / 2, 360);
+    function downloadPDF() {
+      const element = document.getElementById("certificate-content");
+      html2pdf().from(element).save(`Certificate-${certId}.pdf`);
+    }
 
-            // Course name - use course_name from new API or course from old format
-            ctx.fillStyle = "black";
-            ctx.font = "700 30px Cinzel, serif";
-            ctx.textAlign = "center";
-            ctx.fillText(data.course_name || data.course, canvas.width / 2, 480);
-
-            // Issued Date - use issue_date from new API or completion_date from old format
-            ctx.font = "700 18px Cinzel, serif";
-            ctx.textAlign = "left";
-            ctx.fillText(data.issue_date || data.completion_date, 260, 580);
-
-            // Certificate No (above the right black line, black color)
-            ctx.textAlign = "right";
-            ctx.fillText(data.id || data.certificate_id, 950, 580);
-          });
-        })
-        .catch(function(err) {
-          ctx.fillStyle = "red";
-          ctx.font = "bold 30px Arial";
-          ctx.textAlign = "center";
-          ctx.fillText("Error loading certificate data", canvas.width / 2, canvas.height / 2);
-        });
-    };
+    // Generate QR Code
+    QRCode.toCanvas(document.getElementById('qrcode'), certUrl, function (error) {
+      if (error) console.error(error);
+    });
   </script>
+
 </body>
 </html>
