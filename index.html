@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"> 
   <title>Certificate Verification Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
@@ -524,7 +524,8 @@
       resultSection.classList.remove('show');
 
       try {
-        const response = await fetch(`/api/certificate/${encodeURIComponent(id)}`);
+        const response = await fetch(`https://certificate-verification-backend-6r7x.onrender.com/api/certificate/${encodeURIComponent(id)}`)
+
         const data = await response.json();
 
         if (response.ok && data.success) {
