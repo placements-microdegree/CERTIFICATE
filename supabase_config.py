@@ -95,7 +95,8 @@ def get_certificate_by_id(certificate_id: str):
     
     try:
         print(f"Attempting to fetch certificate {certificate_id} from Supabase...")
-        response = supabase.table('certificates').select('*').eq('certificate_id', certificate_id).execute()
+        response = supabase.table('certificates').select('*').eq('certificate_id', cert_id.upper()).execute()
+
         print(f"Supabase response: {response}")
         
         if response.data and len(response.data) > 0:
