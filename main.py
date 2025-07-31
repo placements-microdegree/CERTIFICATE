@@ -13,7 +13,7 @@ app.add_middleware(
     allow_origins=[
         "https://certificate-verification-ecru.vercel.app",
         "https://certificate-three-wheat.vercel.app",
-        "http://localhost:5000"
+        "http://localhost:5000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -28,37 +28,45 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 async def read_root():
     try:
-        with open('index.html', 'r', encoding='utf-8') as f:
+        with open("index.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error serving root page: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error serving root page: {str(e)}"
+        )
 
 
 @app.get("/home")
 async def home_page():
     try:
-        with open('home.html', 'r', encoding='utf-8') as f:
+        with open("home.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error serving home page: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error serving home page: {str(e)}"
+        )
 
 
 @app.get("/verify")
 async def verification_portal():
     try:
-        with open('index.html', 'r', encoding='utf-8') as f:
+        with open("index.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error serving verification page: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error serving verification page: {str(e)}"
+        )
 
 
 @app.get("/test")
 async def test_page():
     try:
-        with open('test.html', 'r', encoding='utf-8') as f:
+        with open("test.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error serving test page: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error serving test page: {str(e)}"
+        )
 
 
 @app.get("/api/certificate/{cert_id}")
@@ -75,11 +83,14 @@ async def get_certificate(cert_id: str):
                     "recipient_name": certificate_data["student_name"],
                     "course_name": certificate_data["course"],
                     "issue_date": certificate_data["completion_date"],
-                    "issuer": "MicroDegree Academy"
-                }
+                    "issuer": "MicroDegree Academy",
+                },
             }
         else:
-            return JSONResponse(status_code=404, content={"success": False, "message": "Certificate not found"})
+            return JSONResponse(
+                status_code=404,
+                content={"success": False, "message": "Certificate not found"},
+            )
     except Exception as e:
         print(f"Exception occurred: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})
@@ -101,9 +112,9 @@ async def serve_certificate_page(certificate_id: str):
         # Optional: auto-update URL if not set
         cert_url = f"https://certificate-three-wheat.vercel.app/cert/{certificate_id}"
         if not cert_data.get("certificate_url"):
-            supabase.table("certificates").update({
-                "certificate_url": cert_url
-            }).eq("certificate_id", certificate_id).execute()
+            supabase.table("certificates").update({"certificate_url": cert_url}).eq(
+                "certificate_id", certificate_id
+            ).execute()
 
         html_content = (
             html_content.replace("{{student_name}}", cert_data["student_name"])
@@ -136,17 +147,17 @@ async def health_check():
 @app.get("/debug")
 async def debug_info():
     return {
-        "supabase_url_set": bool(os.getenv('SUPABASE_URL')),
-        "supabase_key_set": bool(os.getenv('SUPABASE_KEY')),
-        "supabase_url": os.getenv('SUPABASE_URL', 'Not set'),
-        "environment": os.getenv('VERCEL_ENV', 'local')
+        "supabase_url_set": bool(os.getenv("SUPABASE_URL")),
+        "supabase_key_set": bool(os.getenv("SUPABASE_KEY")),
+        "supabase_url": os.getenv("SUPABASE_URL", "Not set"),
+        "environment": os.getenv("VERCEL_ENV", "local"),
     }
 
 
 @app.get("/debug/certificates")
 async def debug_all_certs():
     try:
-        response = supabase.table('certificates').select('*').execute()
+        response = supabase.table("certificates").select("*").execute()
         return response.data
     except Exception as e:
         return {"error": str(e)}
@@ -156,13 +167,16 @@ async def debug_all_certs():
 async def serve_verification_page(certificate_id: str):
     """Serve verification page directly for /HR08, /A1, etc."""
     try:
-        with open('index.html', 'r', encoding='utf-8') as f:
+        with open("index.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error serving verification page: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error serving verification page: {str(e)}"
+        )
 
 
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
