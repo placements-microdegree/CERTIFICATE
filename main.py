@@ -1,3 +1,5 @@
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -6,6 +8,7 @@ import os
 from supabase_config import get_certificate_by_id, get_all_certificates, supabase
 
 app = FastAPI(title="Certificate Verification API", version="1.0.0")
+templates = Jinja2Templates(directory="templates")
 
 # CORS for local and Vercel frontend
 app.add_middleware(
@@ -95,12 +98,9 @@ async def get_certificate(cert_id: str):
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 
-@app.get("/cert/{certificate_id}")
-async def serve_certificate_page(certificate_id: str):
+@app.get("/cert/{certificate_id}", response_class=HTMLResponse)
+async def serve_certificate_page(request: Request, certificate_id: str):
     try:
-        with open("certificate.html", "r", encoding="utf-8") as f:
-            html_content = f.read()
-
         cert_data = get_certificate_by_id(certificate_id)
         if not cert_data:
             return HTMLResponse(
@@ -114,18 +114,19 @@ async def serve_certificate_page(certificate_id: str):
                 "certificate_id", certificate_id
             ).execute()
 
-        html_content = (
-            html_content.replace("{{student_name}}", cert_data["student_name"])
-            .replace("{{course_name}}", cert_data["course"])
-            .replace("{{completion_date}}", cert_data["completion_date"])
-            .replace("{{certificate_id}}", cert_data["certificate_id"])
-        )
-        return HTMLResponse(content=html_content)
+        return templates.TemplateResponse("certificate.html", {
+            "request": request,
+            "student_name": cert_data["student_name"],
+            "course_name": cert_data["course"],
+            "completion_date": cert_data["completion_date"],
+            "certificate_id": cert_data["certificate_id"]
+        })
     except Exception as e:
         return HTMLResponse(
             content=f"<h2 style='text-align:center;color:#b91c1c;margin-top:3em'>Error: {str(e)}</h2>",
             status_code=500,
         )
+
 
 
 @app.get("/certificates")
