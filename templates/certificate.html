@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MicroDegree Certificate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('/static/template.jpg.png') no-repeat center center;
+      background-size: contain;
+      height: 100vh;
+      width: 100vw;
+      font-family: 'Cinzel', serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      color: #000;
+    }
+
+    .name {
+      position: absolute;
+      top: 43%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.8em;
+      font-weight: bold;
+    }
+
+    .course {
+      position: absolute;
+      top: 55.5%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.6em;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .date {
+      position: absolute;
+      bottom: 30%;
+      left: 29.5%;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+
+    .certid {
+      position: absolute;
+      bottom: 30%;
+      right: 31.5%;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="name">{{student_name}}</div>
+    <div class="course">{{course_name}}</div>
+    <div class="date">{{completion_date}}</div>
+    <div class="certid">{{certificate_id}}</div>
+  </div>
+</body>
+</html>
