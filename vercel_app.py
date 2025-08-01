@@ -12,7 +12,7 @@ app.add_middleware(
     allow_origins=[
         "https://certificate-three-wheat.vercel.app",
         "https://certificate-czlvnefi0-habins-projects-2ddf3087.vercel.app",
-        "http://localhost:5000"
+        "http://localhost:5000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -25,43 +25,48 @@ MOCK_CERTIFICATES = [
         "certificate_id": "CERT-001",
         "student_name": "Habin Rahman",
         "course_name": "ReactJS with Supabase",
-        "completion_date": "2025-07-07"
+        "completion_date": "2025-07-07",
     },
     {
         "certificate_id": "HR08",
         "student_name": "HABIN",
         "course_name": "PYTHON",
-        "completion_date": "2025-07-11"
+        "completion_date": "2025-07-11",
     },
     {
         "certificate_id": "test123",
         "student_name": "Michael Chen",
         "course_name": "Data Science Essentials",
-        "completion_date": "2024-03-10"
-    }
+        "completion_date": "2024-03-10",
+    },
 ]
+
 
 def get_certificate_by_id(certificate_id: str):
     """Get certificate data by ID"""
     for cert in MOCK_CERTIFICATES:
-        if cert['certificate_id'] == certificate_id:
+        if cert["certificate_id"] == certificate_id:
             return {
-                "student_name": cert['student_name'],
-                "course": cert['course_name'],
-                "completion_date": cert['completion_date'],
-                "certificate_id": cert['certificate_id']
+                "student_name": cert["student_name"],
+                "course": cert["course_name"],
+                "completion_date": cert["completion_date"],
+                "certificate_id": cert["certificate_id"],
             }
     return None
+
 
 @app.get("/")
 async def read_root():
     """Serve the verification portal"""
     try:
-        with open('index.html', 'r', encoding='utf-8') as f:
+        with open("index.html", "r", encoding="utf-8") as f:
             html_content = f.read()
         return HTMLResponse(content=html_content)
     except Exception as e:
-        return HTMLResponse(content=f"<h1>Certificate Verification Portal</h1><p>Error: {str(e)}</p>")
+        return HTMLResponse(
+            content=f"<h1>Certificate Verification Portal</h1><p>Error: {str(e)}</p>"
+        )
+
 
 @app.get("/api/certificate/{cert_id}")
 async def get_certificate(cert_id: str):
@@ -69,17 +74,23 @@ async def get_certificate(cert_id: str):
     try:
         certificate_data = get_certificate_by_id(cert_id)
         if certificate_data:
-            return {"success": True, "certificate": {
-                "id": certificate_data["certificate_id"],
-                "recipient_name": certificate_data["student_name"],
-                "course_name": certificate_data["course"],
-                "issue_date": certificate_data["completion_date"],
-                "issuer": "MicroDegree Academy"
-            }}
+            return {
+                "success": True,
+                "certificate": {
+                    "id": certificate_data["certificate_id"],
+                    "recipient_name": certificate_data["student_name"],
+                    "course_name": certificate_data["course"],
+                    "issue_date": certificate_data["completion_date"],
+                    "issuer": "MicroDegree Academy",
+                },
+            }
         else:
             return {"success": False, "message": "Certificate not found"}
     except Exception as e:
-        return JSONResponse(status_code=500, content={"success": False, "message": str(e)})
+        return JSONResponse(
+            status_code=500, content={"success": False, "message": str(e)}
+        )
+
 
 @app.get("/cert/{certificate_id}")
 async def serve_certificate_page(certificate_id: str):
@@ -107,12 +118,15 @@ async def serve_certificate_page(certificate_id: str):
             status_code=500,
         )
 
+
 @app.get("/{certificate_id}")
 async def serve_verification_page(certificate_id: str):
     """Serve the verification page with certificate data for direct certificate ID access"""
     try:
-        with open('index.html', 'r', encoding='utf-8') as f:
+        with open("index.html", "r", encoding="utf-8") as f:
             html_content = f.read()
         return HTMLResponse(content=html_content)
     except Exception as e:
-        return HTMLResponse(content=f"<h1>Error loading verification page: {str(e)}</h1>")
+        return HTMLResponse(
+            content=f"<h1>Error loading verification page: {str(e)}</h1>"
+        )

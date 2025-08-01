@@ -99,3 +99,7 @@ Direct Test URLs:
 https://certificate-three-wheat.vercel.app/HR08
 https://certificate-three-wheat.vercel.app/test123
 https://certificate-three-wheat.vercel.app/CERT-001
+
+vercel: https://certificate-three-wheat.vercel.app/
+
+render: https://certificate-verification-backend-6r7x.onrender.com/

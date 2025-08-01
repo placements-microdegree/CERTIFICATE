@@ -2,102 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MicroDegree Certificate</title>
-  <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f4f8;
       margin: 0;
       padding: 0;
+      background: url('/static/template.jpg.png') no-repeat center center;
+      background-size: contain;
+      height: 100vh;
+      width: 100vw;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
       text-align: center;
+      color: #000;
     }
-    .certificate {
-      margin: 40px auto;
-      background: #fff;
-      padding: 30px;
-      width: 85%;
-      border: 6px double #333;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.15);
+
+    .name {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.3em;
+      font-weight: bold;
     }
-    h1 {
-      color: #1d4ed8;
+
+    .course {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.5em;
     }
-    .meta {
-      color: #444;
-      font-size: 1.1em;
-      margin-bottom: 1.5em;
+
+    .date {
+      position: absolute;
+      bottom: 90px;
+      left: 13%;
+      font-size: 1em;
     }
-    .actions {
-      margin-top: 20px;
-    }
-    button {
-      margin: 6px;
-      padding: 10px 15px;
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    button:hover {
-      background-color: #1e40af;
-    }
-    #qrcode {
-      margin-top: 20px;
+
+    .certid {
+      position: absolute;
+      bottom: 90px;
+      right: 13%;
+      font-size: 1em;
     }
   </style>
 </head>
 <body>
-
-  <div class="certificate" id="certificate-content">
-    <h1>Certificate of Completion</h1>
-    <p>This is to certify that <strong>{{student_name}}</strong></p>
-    <p>has successfully completed the course <strong>{{course_name}}</strong></p>
-    <p class="meta">Date of Completion: <strong>{{completion_date}}</strong></p>
-    <p class="meta">Certificate ID: <strong>{{certificate_id}}</strong></p>
+  <div class="overlay">
+    <div class="name">{{student_name}}</div>
+    <div class="course">{{course_name}}</div>
+    <div class="date">{{completion_date}}</div>
+    <div class="certid">{{certificate_id}}</div>
   </div>
-
-  <div class="actions">
-    <button onclick="copyLink()">📋 Copy Link</button>
-    <button onclick="shareWhatsApp()">📲 Share</button>
-    <button onclick="downloadPDF()">🧾 Download PDF</button>
-  </div>
-
-  <div id="qrcode"></div>
-
-  <!-- JS LIBRARIES -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-  <script>
-    const certId = "{{certificate_id}}";
-    const baseUrl = "https://certificate-verification-backend-6r7x.onrender.com";
-    const certUrl = `${baseUrl}/cert/${certId}`;
-
-    function copyLink() {
-      navigator.clipboard.writeText(certUrl);
-      alert("🔗 Link copied: " + certUrl);
-    }
-
-    function shareWhatsApp() {
-      const message = `🎓 Here's my verified certificate from MicroDegree:\n${certUrl}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-    }
-
-    function downloadPDF() {
-      const element = document.getElementById("certificate-content");
-      html2pdf().from(element).save(`Certificate-${certId}.pdf`);
-    }
-
-    // Generate QR Code
-    QRCode.toCanvas(document.getElementById('qrcode'), certUrl, function (error) {
-      if (error) console.error(error);
-    });
-  </script>
-
 </body>
 </html>

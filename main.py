@@ -20,7 +20,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Serve static assets (CSS, images, etc.)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -109,10 +108,9 @@ async def serve_certificate_page(certificate_id: str):
                 status_code=404,
             )
 
-        # Optional: auto-update URL if not set
         cert_url = f"https://certificate-three-wheat.vercel.app/cert/{certificate_id}"
         if not cert_data.get("certificate_url"):
-            supabase.table("certificates").update({"certificate_url": cert_url}).eq(
+            supabase.table("certificate_users").update({"certificate_url": cert_url}).eq(
                 "certificate_id", certificate_id
             ).execute()
 
@@ -157,7 +155,7 @@ async def debug_info():
 @app.get("/debug/certificates")
 async def debug_all_certs():
     try:
-        response = supabase.table("certificates").select("*").execute()
+        response = supabase.table("certificate_users").select("*").execute()
         return response.data
     except Exception as e:
         return {"error": str(e)}
@@ -165,7 +163,6 @@ async def debug_all_certs():
 
 @app.get("/{certificate_id}")
 async def serve_verification_page(certificate_id: str):
-    """Serve verification page directly for /HR08, /A1, etc."""
     try:
         with open("index.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
