@@ -1,21 +1,21 @@
+import os
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
-from fastapi import FastAPI, HTTPException
+from fastapi import Request, FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-import os
 from supabase_config import get_certificate_by_id, get_all_certificates, supabase
 
 app = FastAPI(title="Certificate Verification API", version="1.0.0")
 templates = Jinja2Templates(directory="templates")
 
-# CORS for local and Vercel frontend
+# CORS for local, Vercel, and microdegree domains
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://certificate-verification-ecru.vercel.app",
         "https://certificate-three-wheat.vercel.app",
+        "https://cert.microdegree.in",
         "http://localhost:5000",
     ],
     allow_credentials=True,
@@ -23,78 +23,57 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve static assets (CSS, images, etc.)
+# Serve static assets (CSS, images)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def read_root():
     try:
         with open("index.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error serving root page: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error serving root page: {e}")
 
 
-@app.get("/home")
+@app.get("/home", response_class=HTMLResponse)
 async def home_page():
     try:
         with open("home.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error serving home page: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error serving home page: {e}")
 
 
-@app.get("/verify")
+@app.get("/verify", response_class=HTMLResponse)
 async def verification_portal():
     try:
         with open("index.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error serving verification page: {str(e)}"
-        )
-
-
-@app.get("/test")
-async def test_page():
-    try:
-        with open("test.html", "r", encoding="utf-8") as f:
-            return HTMLResponse(content=f.read())
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error serving test page: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error serving verification page: {e}")
 
 
 @app.get("/api/certificate/{cert_id}")
 async def get_certificate(cert_id: str):
-    print(f"Received request for certificate_id: {cert_id}")
     try:
-        certificate_data = get_certificate_by_id(cert_id)
-        print(f"Certificate data: {certificate_data}")
-        if certificate_data:
-            return {
-                "success": True,
-                "certificate": {
-                    "id": certificate_data["certificate_id"],
-                    "recipient_name": certificate_data["student_name"],
-                    "course_name": certificate_data["course"],
-                    "issue_date": certificate_data["completion_date"],
-                    "issuer": "MicroDegree Academy",
-                },
-            }
-        else:
+        cert_data = get_certificate_by_id(cert_id)
+        if not cert_data:
             return JSONResponse(
-                status_code=404,
-                content={"success": False, "message": "Certificate not found"},
+                status_code=404, content={"success": False, "message": "Certificate not found"}
             )
+
+        return {
+            "success": True,
+            "certificate": {
+                "id": cert_data["certificate_id"],
+                "recipient_name": cert_data["student_name"],
+                "course_name": cert_data["course_name"],
+                "issue_date": cert_data["completion_date"],
+                "issuer": "MicroDegree Academy",
+            },
+        }
     except Exception as e:
-        print(f"Exception occurred: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 
@@ -104,29 +83,33 @@ async def serve_certificate_page(request: Request, certificate_id: str):
         cert_data = get_certificate_by_id(certificate_id)
         if not cert_data:
             return HTMLResponse(
-                content="<h2 style='text-align:center;color:#b91c1c;margin-top:3em'>Certificate Not Found</h2>",
+                "<h2 style='text-align:center;color:#b91c1c;margin-top:3em'>Certificate Not Found</h2>",
                 status_code=404,
             )
 
-        cert_url = f"https://certificate-three-wheat.vercel.app/cert/{certificate_id}"
+        # Ensure the URL is correct for your custom domain
+        cert_url = f"https://cert.microdegree.in/cert/{certificate_id}"
+        # Optional: update Supabase if missing
         if not cert_data.get("certificate_url"):
             supabase.table("certificate_users").update({"certificate_url": cert_url}).eq(
                 "certificate_id", certificate_id
             ).execute()
 
-        return templates.TemplateResponse("certificate.html", {
-            "request": request,
-            "student_name": cert_data["student_name"],
-            "course_name": cert_data["course"],
-            "completion_date": cert_data["completion_date"],
-            "certificate_id": cert_data["certificate_id"]
-        })
+        return templates.TemplateResponse(
+            "certificate.html",
+            {
+                "request": request,
+                "student_name": cert_data["student_name"],
+                "course_name": cert_data["course_name"],
+                "completion_date": cert_data["completion_date"],
+                "certificate_id": cert_data["certificate_id"],
+            },
+        )
     except Exception as e:
         return HTMLResponse(
-            content=f"<h2 style='text-align:center;color:#b91c1c;margin-top:3em'>Error: {str(e)}</h2>",
+            f"<h2 style='text-align:center;color:#b91c1c;margin-top:3em'>Error: {str(e)}</h2>",
             status_code=500,
         )
-
 
 
 @app.get("/certificates")
@@ -160,17 +143,6 @@ async def debug_all_certs():
         return response.data
     except Exception as e:
         return {"error": str(e)}
-
-
-@app.get("/{certificate_id}")
-async def serve_verification_page(certificate_id: str):
-    try:
-        with open("index.html", "r", encoding="utf-8") as f:
-            return HTMLResponse(content=f.read())
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error serving verification page: {str(e)}"
-        )
 
 
 if __name__ == "__main__":
