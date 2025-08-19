@@ -1,124 +1,91 @@
 import os
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
-from fastapi import Request, FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from supabase_config import (
-    get_certificate_by_id,
-    get_all_certificates,
-    SUPABASE_URL,
-    TABLE_NAME,
-)
+from supabase_config import get_certificate_by_id, get_all_certificates
 
-app = FastAPI(title="Certificate Verification API", version="1.0.1")
-templates = Jinja2Templates(directory="templates")
+# ----------------------
+# FastAPI App
+# ----------------------
+app = FastAPI(title="Certificate Verification API", version="1.0.0")
 
-# ---------------- CORS ---------------- #
+# ----------------------
+# CORS Middleware
+# ----------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://cert.microdegree.in",
-        "http://localhost:5000",
-        "http://localhost:3000",
-    ],
+    allow_origins=["*"],  # You can restrict later to frontend domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ---------------- Static ---------------- #
+# ----------------------
+# Templates + Static
+# ----------------------
+templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ---------------- ROUTES ---------------- #
-
+# ----------------------
+# Frontend Pages
+# ----------------------
 @app.get("/", response_class=HTMLResponse)
-async def read_root():
-    """Serve index.html"""
-    try:
-        with open("index.html", "r", encoding="utf-8") as f:
-            return HTMLResponse(content=f.read())
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error serving root page: {e}")
-
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/cert/{certificate_id}", response_class=HTMLResponse)
-async def serve_certificate_page(request: Request, certificate_id: str):
-    """Serve certificate display page (frontend)."""
-    print(f"📩 [UI] /cert/{certificate_id} requested")
-    cert_data = get_certificate_by_id(certificate_id)
-    if not cert_data:
-        print(f"❌ Certificate {certificate_id} not found in {TABLE_NAME}")
-        return HTMLResponse(
-            "<h2 style='text-align:center;color:#b91c1c;margin-top:3em'>Certificate Not Found</h2>",
-            status_code=404,
+async def certificate_page(request: Request, certificate_id: str):
+    cert = get_certificate_by_id(certificate_id)
+    if not cert:
+        return templates.TemplateResponse(
+            "error.html",
+            {"request": request, "message": "Certificate not found"}
         )
+    return templates.TemplateResponse("certificate.html", {"request": request, "cert": cert})
 
-    return templates.TemplateResponse(
-        "certificate.html",
-        {
-            "request": request,
-            "student_name": cert_data.get("student_name"),
-            "course_name": cert_data.get("course_name"),
-            "completion_date": cert_data.get("completion_date"),
-            "certificate_id": cert_data.get("certificate_id"),
-        },
-    )
+# ----------------------
+# API Routes
+# ----------------------
+@app.get("/api/certificates")
+async def api_get_certificates():
+    try:
+        certificates = get_all_certificates()
+        return {"success": True, "data": certificates}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/certificate/{certificate_id}")
+async def api_get_certificate(certificate_id: str):
+    try:
+        cert = get_certificate_by_id(certificate_id)
+        if not cert:
+            return {"success": False, "message": "Certificate not found"}
+        return {"success": True, "data": cert}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/certificate/{cert_id}")
-async def get_certificate_api(cert_id: str):
-    """Public API for certificate verification."""
-    print(f"📩 [API] Verifying cert_id={cert_id}")
-    cert_data = get_certificate_by_id(cert_id)
-    if not cert_data:
-        print(f"❌ [API] cert_id={cert_id} not found in {TABLE_NAME}")
-        return JSONResponse(
-            status_code=404, content={"success": False, "message": "Certificate not found"}
-        )
+# ----------------------
+# New Verify API (like MicroDegree's)
+# ----------------------
+@app.get("/verify/{certificate_id}")
+async def verify_certificate(certificate_id: str):
+    try:
+        cert = get_certificate_by_id(certificate_id)
+        if not cert:
+            return {"success": False, "message": "Certificate not found"}
+        return {"success": True, "data": cert}
+    except Exception as e:
+        return {"success": False, "message": str(e)}
 
-    print(f"✅ [API] Found certificate {cert_id}")
-    return {
-        "success": True,
-        "certificate": {
-            "id": cert_data.get("certificate_id"),
-            "recipient_name": cert_data.get("student_name"),
-            "course_name": cert_data.get("course_name"),
-            "issue_date": cert_data.get("completion_date"),
-            "issuer": "MicroDegree Academy",
-        },
-    }
-
-
-@app.get("/certificates")
-async def get_all_certificates_route():
-    """Return all certificates (for admin use)."""
-    print("📩 [ADMIN] Fetching all certificates")
-    certificates = get_all_certificates()
-    return {"certificates": certificates}
-
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy", "message": "API is running"}
-
-
-@app.get("/api/debug")
-async def debug_certificates():
-    """Debug Supabase connection + data preview."""
-    print("🐞 [DEBUG] Fetching all certificates for inspection")
-    certificates = get_all_certificates()
-    return {
-        "supabase_url": SUPABASE_URL,
-        "table": TABLE_NAME,
-        "count": len(certificates),
-        "sample": certificates[:5],  # only first 5
-    }
-
-
-# ---------------- MAIN ENTRY ---------------- #
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+# ----------------------
+# Debug Route (optional)
+# ----------------------
+@app.get("/debug/supabase")
+async def debug_supabase():
+    try:
+        certificates = get_all_certificates()
+        return {"success": True, "count": len(certificates)}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
