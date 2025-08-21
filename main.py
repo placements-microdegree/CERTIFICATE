@@ -87,12 +87,24 @@ async def api_verify_certificate(certificate_id: str):
 # Debug Routes
 # ----------------------
 @app.get("/debug/supabase")
-async def debug_supabase():
+async def debug_supabase(certificate_id: str = None):
+    """
+    Test Supabase connection and optionally fetch a certificate by ID.
+    """
     if not supabase:
         return {"status": "error", "detail": "Supabase client not initialized"}
+
     try:
-        response = supabase.table("certificates").select("*").limit(1).execute()
-        return {"status": "connected", "sample": response.data}
+        if not certificate_id:
+            response = supabase.table("certificates").select("*").limit(1).execute()
+            return {"status": "connected", "sample": response.data}
+
+        certificate_id = certificate_id.strip().upper()
+        response = supabase.table("certificates").select("*").ilike("certificate_id", certificate_id).execute()
+
+        if response.data:
+            return {"status": "connected", "certificate_found": True, "certificate": response.data[0]}
+        return {"status": "connected", "certificate_found": False, "message": "Certificate not found"}
     except Exception as e:
         return {"status": "error", "detail": str(e)}
 
@@ -108,35 +120,11 @@ async def debug_certificates(limit: int = 5, ids_only: bool = False):
         return {"success": True, "data": response.data}
     except Exception as e:
         return {"success": False, "error": str(e)}
-@app.get("/debug/supabase")
-async def debug_supabase(certificate_id: str = None):
-    """
-    Test connection to Supabase and optionally fetch a certificate by ID.
-    If certificate_id is provided, it performs a case-insensitive search.
-    """
-    if not supabase:
-        return {"status": "error", "detail": "Supabase client not initialized"}
 
-    try:
-        # If no certificate_id is provided, fetch one record for testing
-        if not certificate_id:
-            response = supabase.table("certificates").select("*").limit(1).execute()
-            return {"status": "connected", "sample": response.data}
-
-        # Case-insensitive fetch by certificate_id
-        certificate_id = certificate_id.strip().upper()
-        response = supabase.table("certificates").select("*").ilike("certificate_id", certificate_id).execute()
-        
-        if response.data:
-            return {"status": "connected", "certificate_found": True, "certificate": response.data[0]}
-        return {"status": "connected", "certificate_found": False, "message": "Certificate not found"}
-
-    except Exception as e:
-        return {"status": "error", "detail": str(e)}
-        @app.get("/debug/certificate_ids")
+@app.get("/debug/certificate_ids")
 async def debug_certificate_ids():
     """
-    Fetch all certificate IDs in both uppercase and lowercase for verification.
+    Fetch all certificate IDs in uppercase and lowercase.
     """
     if not supabase:
         return {"success": False, "error": "Supabase client not initialized"}
@@ -155,9 +143,9 @@ async def debug_certificate_ids():
             "certificate_ids_lowercase": ids_lower,
             "total": len(ids_upper)
         }
-
     except Exception as e:
         return {"success": False, "error": str(e)}
+
 @app.get("/debug/full")
 async def debug_full():
     """
@@ -167,11 +155,9 @@ async def debug_full():
         return {"success": False, "error": "Supabase client not initialized"}
 
     try:
-        # Test connection & fetch one sample certificate
         sample_response = supabase.table("certificates").select("*").limit(1).execute()
         sample_cert = sample_response.data[0] if sample_response.data else None
 
-        # Fetch all certificate IDs
         all_response = supabase.table("certificates").select("certificate_id").execute()
         ids_upper = [row["certificate_id"].upper() for row in all_response.data] if all_response.data else []
         ids_lower = [row["certificate_id"].lower() for row in all_response.data] if all_response.data else []
@@ -183,6 +169,5 @@ async def debug_full():
             "certificate_ids_lowercase": ids_lower,
             "total_certificates": len(ids_upper)
         }
-
     except Exception as e:
         return {"success": False, "error": str(e)}
