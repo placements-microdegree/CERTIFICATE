@@ -121,3 +121,10 @@ async def debug_supabase():
         return {"status": "connected", "sample": response.data}
     except Exception as e:
         return {"status": "error", "detail": str(e)}
+
+@app.get("/debug/certificates")
+def debug_certificates():
+    data = supabase.table("certificate_users").select("*").execute()
+    return data.data
+  except Exception as e:
+        return {"success": False, "error": str(e)}
