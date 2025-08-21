@@ -112,3 +112,12 @@ async def debug_certs():
         return {"success": True, "data": data.data}
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+@app.get("/debug/supabase")
+async def debug_supabase():
+    try:
+        # Simple check: list tables or check connection
+        response = supabase.table("certificates").select("*").limit(1).execute()
+        return {"status": "connected", "sample": response.data}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
