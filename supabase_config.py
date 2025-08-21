@@ -9,6 +9,12 @@ SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ppwdqxeiksycubxznhgi.supabase.
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "YOUR_SUPABASE_KEY_HERE")
 
 # ----------------------
+# Debug
+# ----------------------
+print(f"[DEBUG] SUPABASE_URL: {SUPABASE_URL}")
+print(f"[DEBUG] SUPABASE_KEY is {'set' if SUPABASE_KEY else 'MISSING'}")
+
+# ----------------------
 # Supabase client
 # ----------------------
 supabase: Optional[Client] = None
@@ -21,7 +27,7 @@ except Exception as e:
 # ----------------------
 # Table configuration
 # ----------------------
-TABLE_NAME = "certificates"
+TABLE_NAME = "certificates"  # ONLY use this table now
 
 # ----------------------
 # Functions
@@ -35,8 +41,9 @@ def get_certificate_by_id(certificate_id: str) -> Optional[Dict]:
         return None
 
     certificate_id = certificate_id.strip().upper()
+    print(f"[DEBUG] Fetching certificate with ID: {certificate_id} from table: {TABLE_NAME}")
+    
     try:
-        # Query only the 'certificates' table
         response = supabase.table(TABLE_NAME).select("*").ilike("certificate_id", certificate_id).execute()
         if response.data:
             cert = response.data[0]
@@ -60,6 +67,7 @@ def get_all_certificates(limit: int = 20) -> List[Dict]:
     if not supabase:
         print("⚠️ Supabase client not initialized")
         return []
+    print(f"[DEBUG] Fetching all certificates (limit={limit}) from table: {TABLE_NAME}")
     try:
         response = supabase.table(TABLE_NAME).select("*").limit(limit).execute()
         return response.data or []
@@ -69,7 +77,7 @@ def get_all_certificates(limit: int = 20) -> List[Dict]:
 
 def add_sample_data():
     """
-    Insert sample certificates for testing
+    Insert sample certificates for testing purposes
     """
     if not supabase:
         print("⚠️ Supabase client not initialized")
