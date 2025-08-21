@@ -8,10 +8,12 @@ from typing import Optional, List, Dict
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ppwdqxeiksycubxznhgi.supabase.co")
 SUPABASE_KEY = os.getenv(
     "SUPABASE_KEY",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwd2RxeGVpa3N5Y3VieHpuaGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMyNjc2OTIsImV4cCI6MjA2ODg0MzY5Mn0.2I5onLomqWgjOW5W4OVPmk9rAIxAg63InltNrYPYbBw"
+    "YOUR_SUPABASE_KEY_HERE"
 )
 
+# ----------------------
 # Debug
+# ----------------------
 print(f"[DEBUG] SUPABASE_URL: {SUPABASE_URL}")
 print(f"[DEBUG] SUPABASE_KEY is {'set' if SUPABASE_KEY else 'MISSING'}")
 
@@ -34,25 +36,27 @@ TABLE_NAME = "certificates"  # use the existing table
 # Functions
 # ----------------------
 def get_certificate_by_id(certificate_id: str) -> Optional[Dict]:
-    certificate_id = certificate_id.strip().upper()
+    """
+    Fetch a certificate by certificate_id (case-insensitive)
+    """
     if not supabase:
         print("⚠️ Supabase client not initialized")
         return None
 
+    certificate_id = certificate_id.strip().upper()
     try:
-        # Try possible column names
-        for col in ["certificate_id", "id", "cert_id"]:
-            response = supabase.table(TABLE_NAME).select("*").eq(col, certificate_id).execute()
-            if response.data:
-                cert = response.data[0]
-                return {
-                    "student_name": cert.get("student_name"),
-                    "course_name": cert.get("course_name"),
-                    "completion_date": cert.get("completion_date"),
-                    "certificate_id": cert.get(col),
-                    "certificate_url": cert.get("certificate_url"),
-                    "issued_to": cert.get("student_name"),
-                }
+        # Case-insensitive search using ilike
+        response = supabase.table(TABLE_NAME).select("*").ilike("certificate_id", certificate_id).execute()
+        if response.data:
+            cert = response.data[0]
+            return {
+                "student_name": cert.get("student_name"),
+                "course_name": cert.get("course_name"),
+                "completion_date": cert.get("completion_date"),
+                "certificate_id": cert.get("certificate_id"),
+                "certificate_url": cert.get("certificate_url"),
+                "issued_to": cert.get("student_name"),
+            }
         return None
     except Exception as e:
         print(f"[ERROR] Failed to fetch certificate: {e}")
@@ -60,6 +64,9 @@ def get_certificate_by_id(certificate_id: str) -> Optional[Dict]:
 
 
 def get_all_certificates(limit: int = 20) -> List[Dict]:
+    """
+    Fetch all certificates from the certificates table
+    """
     if not supabase:
         print("⚠️ Supabase client not initialized")
         return []
@@ -72,6 +79,9 @@ def get_all_certificates(limit: int = 20) -> List[Dict]:
 
 
 def add_sample_data():
+    """
+    Insert sample certificates for testing purposes
+    """
     if not supabase:
         print("⚠️ Supabase client not initialized")
         return
