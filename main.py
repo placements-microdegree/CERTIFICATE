@@ -88,12 +88,8 @@ async def api_verify_certificate(certificate_id: str):
 # ----------------------
 @app.get("/debug/supabase")
 async def debug_supabase(certificate_id: str = None):
-    """
-    Test Supabase connection and optionally fetch a certificate by ID.
-    """
     if not supabase:
         return {"status": "error", "detail": "Supabase client not initialized"}
-
     try:
         if not certificate_id:
             response = supabase.table("certificates").select("*").limit(1).execute()
@@ -101,42 +97,20 @@ async def debug_supabase(certificate_id: str = None):
 
         certificate_id = certificate_id.strip().upper()
         response = supabase.table("certificates").select("*").ilike("certificate_id", certificate_id).execute()
-
         if response.data:
             return {"status": "connected", "certificate_found": True, "certificate": response.data[0]}
         return {"status": "connected", "certificate_found": False, "message": "Certificate not found"}
     except Exception as e:
         return {"status": "error", "detail": str(e)}
 
-@app.get("/debug/certificates")
-async def debug_certificates(limit: int = 5, ids_only: bool = False):
-    if not supabase:
-        return {"success": False, "error": "Supabase client not initialized"}
-    try:
-        query = supabase.table("certificates").select("*" if not ids_only else "certificate_id")
-        if limit:
-            query = query.limit(limit)
-        response = query.execute()
-        return {"success": True, "data": response.data}
-    except Exception as e:
-        return {"success": False, "error": str(e)}
-
 @app.get("/debug/certificate_ids")
 async def debug_certificate_ids():
-    """
-    Fetch all certificate IDs in uppercase and lowercase.
-    """
     if not supabase:
         return {"success": False, "error": "Supabase client not initialized"}
-
     try:
         response = supabase.table("certificates").select("certificate_id").execute()
-        if not response.data:
-            return {"success": True, "certificate_ids": [], "message": "No certificates found"}
-
-        ids_upper = [row["certificate_id"].upper() for row in response.data]
-        ids_lower = [row["certificate_id"].lower() for row in response.data]
-
+        ids_upper = [row["certificate_id"].upper() for row in response.data] if response.data else []
+        ids_lower = [row["certificate_id"].lower() for row in response.data] if response.data else []
         return {
             "success": True,
             "certificate_ids_uppercase": ids_upper,
@@ -148,12 +122,8 @@ async def debug_certificate_ids():
 
 @app.get("/debug/full")
 async def debug_full():
-    """
-    Full debug: check Supabase connection, fetch sample, list all certificate IDs.
-    """
     if not supabase:
         return {"success": False, "error": "Supabase client not initialized"}
-
     try:
         sample_response = supabase.table("certificates").select("*").limit(1).execute()
         sample_cert = sample_response.data[0] if sample_response.data else None
