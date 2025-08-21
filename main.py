@@ -128,3 +128,24 @@ def debug_certificates():
     return data.data
   except Exception as e:
         return {"success": False, "error": str(e)}
+@app.get("/debug/supabase")
+async def debug_supabase():
+    """
+    Check Supabase connection by fetching 1 record from certificate_users.
+    """
+    try:
+        response = supabase.table("certificate_users").select("*").limit(1).execute()
+        return {"status": "connected", "sample": response.data}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
+@app.get("/debug/certificates")
+def debug_certificates():
+    """
+    Fetch first 5 certificates from certificate_users for debugging.
+    """
+    try:
+        data = supabase.table("certificate_users").select("*").limit(5).execute()
+        return {"success": True, "data": data.data}
+    except Exception as e:
+        return {"success": False, "error": str(e)}

@@ -21,7 +21,8 @@ try:
 except Exception as e:
     print(f"⚠️ Error initializing Supabase client: {e}")
 
-TABLE_NAME = "certificate_users"  # Supabase table for issued certificates
+# ✅ Use only one table going forward
+TABLE_NAME = "certificate_users"   # final table for issued certificates
 
 
 def get_certificate_by_id(certificate_id: str):
