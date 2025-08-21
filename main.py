@@ -6,14 +6,9 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from supabase_config import get_certificate_by_id, get_all_certificates
 
-# ----------------------
-# FastAPI App
-# ----------------------
+from supabase import create_client, Client
 app = FastAPI(title="Certificate Verification API", version="1.0.0")
 
-# ----------------------
-# CORS Middleware
-# ----------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # You can restrict later to frontend domain
@@ -22,9 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ----------------------
-# Templates + Static
-# ----------------------
+
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -87,5 +80,13 @@ async def debug_supabase():
     try:
         certificates = get_all_certificates()
         return {"success": True, "count": len(certificates)}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@app.get("/debug/certs")
+async def debug_certs():
+    try:
+        data = supabase.table("certificates").select("*").limit(5).execute()
+        return {"success": True, "data": data.data}
     except Exception as e:
         return {"success": False, "error": str(e)}

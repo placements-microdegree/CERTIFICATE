@@ -27,34 +27,40 @@ TABLE_NAME = "certificate_users"  # Supabase table for issued certificates
 def get_certificate_by_id(certificate_id: str):
     """
     Fetch a certificate by ID (case-insensitive).
-    Returns dict with student_name, course_name, completion_date, certificate_id, certificate_url.
+    Tries multiple possible column names.
     """
-    certificate_id = certificate_id.strip()
-    print(f"[DEBUG] Looking for certificate_id (case-insensitive): {certificate_id}")
+    certificate_id = certificate_id.strip().upper()
+    print(f"[DEBUG] Looking for certificate_id: {certificate_id}")
+
+    if not supabase:
+        print("⚠️ Supabase client not initialized")
+        return None
 
     try:
-        # Case-insensitive search
-        user_cert_response = (
-            supabase.table(TABLE_NAME)
-            .select("*")
-            .ilike("certificate_id", certificate_id)
-            .execute()
-        )
-        print(f"[DEBUG] Query result: {user_cert_response.data}")
+        # Try possible column names
+        for col in ["certificate_id", "id", "cert_id"]:
+            print(f"[DEBUG] Trying column: {col}")
+            response = (
+                supabase.table(TABLE_NAME)
+                .select("*")
+                .eq(col, certificate_id)
+                .execute()
+            )
+            print(f"[DEBUG] Query result for {col}: {response.data}")
+            if response.data:
+                user_cert = response.data[0]
+                return {
+                    "student_name": user_cert.get("student_name"),
+                    "course_name": user_cert.get("course_name"),
+                    "completion_date": user_cert.get("completion_date"),
+                    "certificate_id": user_cert.get(col),
+                    "certificate_url": user_cert.get("certificate_url"),
+                    "issued_to": user_cert.get("student_name"),
+                }
 
-        if not user_cert_response.data:
-            print("[DEBUG] Certificate not found in certificate_users")
-            return None
+        print("[DEBUG] Certificate not found in any column")
+        return None
 
-        user_cert = user_cert_response.data[0]
-        return {
-            "student_name": user_cert.get("student_name"),
-            "course_name": user_cert.get("course_name"),
-            "completion_date": user_cert.get("completion_date"),
-            "certificate_id": user_cert.get("certificate_id"),
-            "certificate_url": user_cert.get("certificate_url"),
-            "issued_to": user_cert.get("student_name"),
-        }
     except Exception as e:
         print(f"[ERROR] Failed to fetch certificate: {e}")
         return None
@@ -69,7 +75,7 @@ def get_all_certificates():
         return []
 
     try:
-        response = supabase.table(TABLE_NAME).select("*").execute()
+        response = supabase.table(TABLE_NAME).select("*").limit(20).execute()
         print(f"[DEBUG] Total certificates fetched: {len(response.data)}")
         return response.data or []
     except Exception as e:
