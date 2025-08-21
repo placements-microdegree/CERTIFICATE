@@ -1,19 +1,23 @@
 import os
 from supabase import create_client, Client
-from typing import Optional
+from typing import Optional, List, Dict
 
-# ✅ Use environment variables for Supabase credentials
+# ----------------------
+# Supabase credentials
+# ----------------------
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ppwdqxeiksycubxznhgi.supabase.co")
 SUPABASE_KEY = os.getenv(
     "SUPABASE_KEY",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwd2RxeGVpa3N5Y3VieHpuaGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMyNjc2OTIsImV4cCI6MjA2ODg0MzY5Mn0.2I5onLomqWgjOW5W4OVPmk9rAIxAg63InltNrYPYbBw"
 )
 
-# Debug: confirm environment variables
+# Debug
 print(f"[DEBUG] SUPABASE_URL: {SUPABASE_URL}")
 print(f"[DEBUG] SUPABASE_KEY is {'set' if SUPABASE_KEY else 'MISSING'}")
 
-# Create Supabase client
+# ----------------------
+# Supabase client
+# ----------------------
 supabase: Optional[Client] = None
 try:
     supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -21,18 +25,16 @@ try:
 except Exception as e:
     print(f"⚠️ Error initializing Supabase client: {e}")
 
-# ✅ Use only one table going forward
-TABLE_NAME = "certificate_users"   # final table for issued certificates
+# ----------------------
+# Table configuration
+# ----------------------
+TABLE_NAME = "certificates"  # use the existing table
 
-
-def get_certificate_by_id(certificate_id: str):
-    """
-    Fetch a certificate by ID (case-insensitive).
-    Tries multiple possible column names.
-    """
+# ----------------------
+# Functions
+# ----------------------
+def get_certificate_by_id(certificate_id: str) -> Optional[Dict]:
     certificate_id = certificate_id.strip().upper()
-    print(f"[DEBUG] Looking for certificate_id: {certificate_id}")
-
     if not supabase:
         print("⚠️ Supabase client not initialized")
         return None
@@ -40,44 +42,29 @@ def get_certificate_by_id(certificate_id: str):
     try:
         # Try possible column names
         for col in ["certificate_id", "id", "cert_id"]:
-            print(f"[DEBUG] Trying column: {col}")
-            response = (
-                supabase.table(TABLE_NAME)
-                .select("*")
-                .eq(col, certificate_id)
-                .execute()
-            )
-            print(f"[DEBUG] Query result for {col}: {response.data}")
+            response = supabase.table(TABLE_NAME).select("*").eq(col, certificate_id).execute()
             if response.data:
-                user_cert = response.data[0]
+                cert = response.data[0]
                 return {
-                    "student_name": user_cert.get("student_name"),
-                    "course_name": user_cert.get("course_name"),
-                    "completion_date": user_cert.get("completion_date"),
-                    "certificate_id": user_cert.get(col),
-                    "certificate_url": user_cert.get("certificate_url"),
-                    "issued_to": user_cert.get("student_name"),
+                    "student_name": cert.get("student_name"),
+                    "course_name": cert.get("course_name"),
+                    "completion_date": cert.get("completion_date"),
+                    "certificate_id": cert.get(col),
+                    "certificate_url": cert.get("certificate_url"),
+                    "issued_to": cert.get("student_name"),
                 }
-
-        print("[DEBUG] Certificate not found in any column")
         return None
-
     except Exception as e:
         print(f"[ERROR] Failed to fetch certificate: {e}")
         return None
 
 
-def get_all_certificates():
-    """
-    Fetch all certificates from certificate_users.
-    """
+def get_all_certificates(limit: int = 20) -> List[Dict]:
     if not supabase:
         print("⚠️ Supabase client not initialized")
         return []
-
     try:
-        response = supabase.table(TABLE_NAME).select("*").limit(20).execute()
-        print(f"[DEBUG] Total certificates fetched: {len(response.data)}")
+        response = supabase.table(TABLE_NAME).select("*").limit(limit).execute()
         return response.data or []
     except Exception as e:
         print(f"[ERROR] Failed to fetch all certificates: {e}")
@@ -85,9 +72,6 @@ def get_all_certificates():
 
 
 def add_sample_data():
-    """
-    Insert sample certificates for testing.
-    """
     if not supabase:
         print("⚠️ Supabase client not initialized")
         return
