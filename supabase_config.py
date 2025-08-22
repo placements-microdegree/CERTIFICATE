@@ -6,7 +6,7 @@ from typing import Optional, List, Dict
 # Supabase credentials
 # ----------------------
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ppwdqxeiksycubxznhgi.supabase.co")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "YOUR_SUPABASE_KEY_HERE")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwd2RxeGVpa3N5Y3VieHpuaGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMyNjc2OTIsImV4cCI6MjA2ODg0MzY5Mn0.2I5onLomqWgjOW5W4OVPmk9rAIxAg63InltNrYPYbBw")
 
 # ----------------------
 # Debug

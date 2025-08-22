@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from supabase_config import get_certificate_by_id, get_all_certificates, supabase
 from typing import Dict
@@ -27,6 +27,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Helper Function
 # ----------------------
 def fetch_certificate(certificate_id: str) -> Dict:
+    certificate_id = certificate_id.strip().upper()
     cert = get_certificate_by_id(certificate_id)
     if cert:
         return {"cert": cert, "status": "success"}
@@ -81,6 +82,20 @@ async def api_verify_certificate(certificate_id: str):
     result = fetch_certificate(certificate_id)
     if result["status"] == "success":
         return {"success": True, "data": result["cert"]}
+    return JSONResponse({"success": False, "message": "Certificate not found"}, status_code=404)
+
+# ----------------------
+# Single Download Route
+# ----------------------
+@app.get("/api/certificate/{certificate_id}/download")
+async def download_certificate(certificate_id: str):
+    result = fetch_certificate(certificate_id)
+    if result["status"] == "success":
+        file_path = os.path.join("static", "certificates", f"{certificate_id}.pdf")
+        if os.path.exists(file_path):
+            return FileResponse(path=file_path, filename=f"{certificate_id}.pdf", media_type='application/pdf')
+        else:
+            return JSONResponse({"success": False, "message": "Certificate file not found"}, status_code=404)
     return JSONResponse({"success": False, "message": "Certificate not found"}, status_code=404)
 
 # ----------------------
