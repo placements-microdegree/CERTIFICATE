@@ -1,8 +1,5 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-import os
+from main import app
+
 
 app = FastAPI(title="Certificate Verification API", version="1.0.0")
 
