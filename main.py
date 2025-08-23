@@ -156,3 +156,17 @@ async def debug_full():
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
+@app.get("/cert/{cert_id}", response_class=HTMLResponse)
+async def certificate_view(request: Request, cert_id: str):
+    cert = get_certificate_by_id(cert_id)  # fetch from Supabase
+    
+    if not cert:
+        raise HTTPException(status_code=404, detail="Certificate not found")
+
+    return templates.TemplateResponse(
+        "certificate.html",
+        {
+            "request": request,
+            "cert": cert  # pass full certificate data
+        }
+    )
