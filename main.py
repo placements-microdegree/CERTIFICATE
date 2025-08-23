@@ -156,17 +156,3 @@ async def debug_full():
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
-@app.get("/cert/{cert_id}", response_class=HTMLResponse)
-async def cert_page(request: Request, cert_id: str):
-    cert = get_certificate_by_id(cert_id)
-    if not cert:
-        raise HTTPException(status_code=404, detail="Certificate not found")
-
-    try:
-        return templates.TemplateResponse("certificate.html", {
-            "request": request,
-            "certificate": cert
-        })
-    except Exception as e:
-        print("Template render error:", e)
-        raise HTTPException(status_code=500, detail="Template rendering error")
