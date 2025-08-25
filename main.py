@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, FileResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from supabase_config import get_certificate_by_id, get_all_certificates, supabase
 from typing import Dict
@@ -40,8 +40,13 @@ def fetch_certificate(certificate_id: str) -> Dict:
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/cert/{certificate_id}")
+@app.get("/cert/{certificate_id}", response_class=HTMLResponse)
 async def certificate_page(request: Request, certificate_id: str):
+    """
+    Certificate Viewer:
+    - If JSON requested -> return JSON
+    - If HTML requested -> render certificate.html with details
+    """
     result = fetch_certificate(certificate_id)
     accept_header = request.headers.get("accept", "").lower()
 
@@ -51,7 +56,13 @@ async def certificate_page(request: Request, certificate_id: str):
         return JSONResponse({"success": False, "message": "Certificate not found"}, status_code=404)
 
     if result["status"] == "success":
-        return templates.TemplateResponse("certificate.html", {"request": request, "cert": result["cert"]})
+        return templates.TemplateResponse(
+            "certificate.html",
+            {
+                "request": request,
+                "certificate": result["cert"]  # ✅ matches template variable
+            }
+        )
     return templates.TemplateResponse("error.html", {"request": request, "message": "Certificate not found"})
 
 @app.get("/verify/{certificate_id}", response_class=HTMLResponse)
@@ -156,17 +167,3 @@ async def debug_full():
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
-@app.get("/cert/{cert_id}", response_class=HTMLResponse)
-async def certificate_view(request: Request, cert_id: str):
-    cert = get_certificate_by_id(cert_id)  # fetch from Supabase
-    
-    if not cert:
-        raise HTTPException(status_code=404, detail="Certificate not found")
-
-    return templates.TemplateResponse(
-        "certificate.html",
-        {
-            "request": request,
-            "cert": cert  # pass full certificate data
-        }
-    )
