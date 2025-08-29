@@ -4,17 +4,26 @@
   <meta charset="UTF-8" />
   <title>MicroDegree Certificate</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
       padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f8f8f8;
+      font-family: 'Cinzel', serif;
+    }
+
+    .certificate-container {
+      position: relative;
+      width: 100%;
+      max-width: 1200px; /* keeps it large on desktop */
+      aspect-ratio: 16/9; /* ensures proportional scaling */
       background: url('/static/template.jpg.png') no-repeat center center;
       background-size: contain;
-      height: 100vh;
-      width: 100vw;
-      font-family: 'Cinzel', serif;
-      overflow: hidden;
-      position: relative;
     }
 
     .overlay {
@@ -27,12 +36,13 @@
       text-align: center;
     }
 
+    /* text scales relative to container width */
     .name {
       position: absolute;
       top: 43%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2.8em;
+      font-size: clamp(1.2rem, 3vw, 2.8rem);
       font-weight: bold;
       white-space: nowrap;
     }
@@ -42,7 +52,7 @@
       top: 55.5%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2.6em;
+      font-size: clamp(1rem, 2.8vw, 2.6rem);
       font-weight: bold;
       letter-spacing: 1px;
       white-space: nowrap;
@@ -52,7 +62,7 @@
       position: absolute;
       bottom: 30%;
       left: 29.5%;
-      font-size: 1.1em;
+      font-size: clamp(0.7rem, 1.2vw, 1.1rem);
       font-weight: bold;
     }
 
@@ -60,17 +70,31 @@
       position: absolute;
       bottom: 30%;
       right: 31.5%;
-      font-size: 1.1em;
+      font-size: clamp(0.7rem, 1.2vw, 1.1rem);
       font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .certificate-container {
+        max-width: 95%; /* use almost full width on tablets/phones */
+      }
+    }
+
+    @media (max-width: 480px) {
+      .certificate-container {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <div class="name">{{ certificate.student_name }}</div>
-    <div class="course">{{ certificate.course_name }}</div>
-    <div class="date">{{ certificate.completion_date }}</div>
-    <div class="certid">{{ certificate.certificate_id }}</div>
+  <div class="certificate-container">
+    <div class="overlay">
+      <div class="name">{{ certificate.student_name }}</div>
+      <div class="course">{{ certificate.course_name }}</div>
+      <div class="date">{{ certificate.completion_date }}</div>
+      <div class="certid">{{ certificate.certificate_id }}</div>
+    </div>
   </div>
 </body>
 </html>
