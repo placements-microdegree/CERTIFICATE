@@ -20,39 +20,36 @@
     .certificate-container {
       position: relative;
       width: 100%;
-      max-width: 1200px; /* keeps it large on desktop */
-      aspect-ratio: 16/9; /* ensures proportional scaling */
+      max-width: 1200px;
+      aspect-ratio: 16/9;
       background: url('/static/template.jpg.png') no-repeat center center;
       background-size: contain;
     }
 
     .overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      color: #000;
+      inset: 0;
       text-align: center;
+      color: #000;
     }
 
-    /* text scales relative to container width */
+    /* Base text style */
     .name {
       position: absolute;
       top: 43%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: clamp(1.2rem, 3vw, 2.8rem);
+      font-size: clamp(1rem, 2.5vw, 2.4rem);
       font-weight: bold;
       white-space: nowrap;
     }
 
     .course {
       position: absolute;
-      top: 55.5%;
+      top: 56%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: clamp(1rem, 2.8vw, 2.6rem);
+      font-size: clamp(0.9rem, 2.2vw, 2rem);
       font-weight: bold;
       letter-spacing: 1px;
       white-space: nowrap;
@@ -60,30 +57,38 @@
 
     .date {
       position: absolute;
-      bottom: 30%;
-      left: 25.5%;
-      font-size: clamp(0.7rem, 1.2vw, 1.1rem);
+      bottom: 27%;
+      left: 22%;
+      font-size: clamp(0.6rem, 1.5vw, 1rem);
       font-weight: bold;
     }
 
     .certid {
       position: absolute;
-      bottom: 30%;
-      right: 27.7%;
-      font-size: clamp(0.7rem, 1.2vw, 1.1rem);
+      bottom: 27%;
+      right: 22%;
+      font-size: clamp(0.6rem, 1.5vw, 1rem);
       font-weight: bold;
     }
 
+    /* Tablet */
     @media (max-width: 768px) {
       .certificate-container {
-        max-width: 95%; /* use almost full width on tablets/phones */
+        max-width: 95%;
       }
+      .name { top: 42%; font-size: clamp(1rem, 4vw, 2rem); }
+      .course { top: 55%; font-size: clamp(0.9rem, 3.5vw, 1.8rem); }
+      .date, .certid { font-size: clamp(0.7rem, 2.5vw, 0.9rem); }
     }
 
+    /* Mobile */
     @media (max-width: 480px) {
       .certificate-container {
         max-width: 100%;
       }
+      .name { top: 41%; font-size: clamp(0.9rem, 5vw, 1.6rem); }
+      .course { top: 54%; font-size: clamp(0.8rem, 4.5vw, 1.4rem); }
+      .date, .certid { font-size: clamp(0.65rem, 3.5vw, 0.85rem); }
     }
   </style>
 </head>
