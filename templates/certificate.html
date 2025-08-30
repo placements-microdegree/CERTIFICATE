@@ -6,95 +6,99 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: #f8f8f8;
-      font-family: 'Cinzel', serif;
+    /* --- Page base --- */
+    body{
+      margin:0;
+      padding:0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      background:#f8f8f8;
+      font-family:'Cinzel',serif;
     }
 
-    .certificate-container {
-      position: relative;
-      width: 100%;
-      max-width: 1200px;
-      aspect-ratio: 16/9;
-      background: url('/static/template.jpg.png') no-repeat center center;
-      background-size: contain;
+    /* Match the real certificate ratio: A4 landscape ≈ 297:210 (1.414:1) */
+    .certificate-container{
+      position:relative;
+      width:100%;
+      max-width:1200px;
+      aspect-ratio:297 / 210;
+      background:url('/static/template.jpg.png') center center no-repeat;
+      background-size:cover; /* fills container exactly, no letterboxing */
     }
 
-    .overlay {
-      position: absolute;
-      inset: 0;
-      text-align: center;
-      color: #000;
+    .overlay{
+      position:absolute;
+      inset:0;
+      color:#000;
+      text-align:center;
+      line-height:1.1;
     }
 
-    .name {
-      position: absolute;
-      top: 43%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: clamp(1rem, 2.5vw, 2.4rem);
-      font-weight: bold;
-      white-space: nowrap;
+    /* Center content */
+    .name{
+      position:absolute;
+      top:43.5%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      font-weight:bold;
+      font-size:clamp(1rem, 2.6vw, 2.4rem);
+      white-space:nowrap;
+      max-width:90%;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
-    .course {
-      position: absolute;
-      top: 56%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: clamp(0.9rem, 2.2vw, 2rem);
-      font-weight: bold;
-      white-space: nowrap;
+    .course{
+      position:absolute;
+      top:56.2%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      font-weight:bold;
+      font-size:clamp(0.95rem, 2.3vw, 2rem);
+      white-space:nowrap;
+      max-width:92%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      letter-spacing:.5px;
     }
 
-    /* Footer row */
-    .footer-row {
-      position: absolute;
-      bottom: 24%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      display: flex;
-      justify-content: space-between;
-      font-size: clamp(0.6rem, 1.5vw, 1rem);
-      font-weight: bold;
+    /* Footer fields aligned to the labels on the artwork */
+    .date{
+      position:absolute;
+      bottom:30%;
+      left:24.5%;
+      transform:translateX(-50%);
+      font-weight:bold;
+      font-size:clamp(0.7rem, 1.4vw, 1.05rem);
+      white-space:nowrap;
     }
 
-    .footer-item {
-      flex: 1;
-      text-align: center;
+    .certid{
+      position:absolute;
+      bottom:30%;
+      right:24.5%;
+      transform:translateX(50%);
+      font-weight:bold;
+      font-size:clamp(0.7rem, 1.4vw, 1.05rem);
+      white-space:nowrap;
     }
 
-    /* Tablet */
-    @media (max-width: 768px) {
-      .certificate-container {
-        max-width: 95%;
-      }
-      .footer-row {
-        font-size: clamp(0.7rem, 2.5vw, 0.9rem);
-      }
+    /* Tablet tweaks */
+    @media (max-width: 768px){
+      .certificate-container{ max-width:95%; }
+      .name{ top:43%; font-size:clamp(1rem, 4.2vw, 2rem); }
+      .course{ top:55.8%; font-size:clamp(0.9rem, 3.6vw, 1.7rem); }
+      .date,.certid{ bottom:23.5%; font-size:clamp(0.72rem, 2.5vw, 0.95rem); }
     }
 
-    /* Mobile */
-    @media (max-width: 480px) {
-      .certificate-container {
-        max-width: 100%;
-      }
-      .name { font-size: clamp(0.9rem, 5vw, 1.6rem); }
-      .course { font-size: clamp(0.8rem, 4.5vw, 1.4rem); }
-
-      .footer-row {
-        flex-direction: column;
-        gap: 0.4rem;
-        bottom: 22%;
-        font-size: clamp(0.7rem, 3.5vw, 0.9rem);
-      }
+    /* Phone tweaks */
+    @media (max-width: 480px){
+      .certificate-container{ max-width:100%; }
+      .name{ top:42.5%; font-size:clamp(0.95rem, 5.2vw, 1.6rem); }
+      .course{ top:55.5%; font-size:clamp(0.9rem, 4.6vw, 1.4rem); }
+      .date,.certid{ bottom:23%; font-size:clamp(0.7rem, 3.6vw, 0.9rem); }
     }
   </style>
 </head>
@@ -103,11 +107,8 @@
     <div class="overlay">
       <div class="name">{{ certificate.student_name }}</div>
       <div class="course">{{ certificate.course_name }}</div>
-
-      <div class="footer-row">
-        <div class="footer-item">{{ certificate.completion_date }}</div>
-        <div class="footer-item">{{ certificate.certificate_id }}</div>
-      </div>
+      <div class="date">{{ certificate.completion_date }}</div>
+      <div class="certid">{{ certificate.certificate_id }}</div>
     </div>
   </div>
 </body>
