@@ -33,7 +33,6 @@
       color: #000;
     }
 
-    /* Base text style */
     .name {
       position: absolute;
       top: 43%;
@@ -51,24 +50,25 @@
       transform: translate(-50%, -50%);
       font-size: clamp(0.9rem, 2.2vw, 2rem);
       font-weight: bold;
-      letter-spacing: 1px;
       white-space: nowrap;
     }
 
-    .date {
+    /* Footer row */
+    .footer-row {
       position: absolute;
-      bottom: 27%;
-      left: 22%;
+      bottom: 24%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      display: flex;
+      justify-content: space-between;
       font-size: clamp(0.6rem, 1.5vw, 1rem);
       font-weight: bold;
     }
 
-    .certid {
-      position: absolute;
-      bottom: 27%;
-      right: 22%;
-      font-size: clamp(0.6rem, 1.5vw, 1rem);
-      font-weight: bold;
+    .footer-item {
+      flex: 1;
+      text-align: center;
     }
 
     /* Tablet */
@@ -76,9 +76,9 @@
       .certificate-container {
         max-width: 95%;
       }
-      .name { top: 42%; font-size: clamp(1rem, 4vw, 2rem); }
-      .course { top: 55%; font-size: clamp(0.9rem, 3.5vw, 1.8rem); }
-      .date, .certid { font-size: clamp(0.7rem, 2.5vw, 0.9rem); }
+      .footer-row {
+        font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+      }
     }
 
     /* Mobile */
@@ -86,9 +86,15 @@
       .certificate-container {
         max-width: 100%;
       }
-      .name { top: 41%; font-size: clamp(0.9rem, 5vw, 1.6rem); }
-      .course { top: 54%; font-size: clamp(0.8rem, 4.5vw, 1.4rem); }
-      .date, .certid { font-size: clamp(0.65rem, 3.5vw, 0.85rem); }
+      .name { font-size: clamp(0.9rem, 5vw, 1.6rem); }
+      .course { font-size: clamp(0.8rem, 4.5vw, 1.4rem); }
+
+      .footer-row {
+        flex-direction: column;
+        gap: 0.4rem;
+        bottom: 22%;
+        font-size: clamp(0.7rem, 3.5vw, 0.9rem);
+      }
     }
   </style>
 </head>
@@ -97,8 +103,11 @@
     <div class="overlay">
       <div class="name">{{ certificate.student_name }}</div>
       <div class="course">{{ certificate.course_name }}</div>
-      <div class="date">{{ certificate.completion_date }}</div>
-      <div class="certid">{{ certificate.certificate_id }}</div>
+
+      <div class="footer-row">
+        <div class="footer-item">{{ certificate.completion_date }}</div>
+        <div class="footer-item">{{ certificate.certificate_id }}</div>
+      </div>
     </div>
   </div>
 </body>
