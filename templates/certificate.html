@@ -5,6 +5,20 @@
   <title>MicroDegree Certificate</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ✅ Open Graph Meta Tags for LinkedIn/WhatsApp Sharing -->
+  <meta property="og:title" content="Certified {{ certificate.course_name }} | MicroDegree" />
+  <meta property="og:description" content="Verify this official MicroDegree certificate awarded to {{ certificate.student_name }}." />
+  <meta property="og:image" content="https://certificate.microdegree.in/assets/certificate-preview.png" />
+  <meta property="og:url" content="https://certificate.microdegree.in/cert/{{ certificate.certificate_id }}" />
+  <meta property="og:type" content="website" />
+
+  <!-- ✅ Twitter Card Meta -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Certified {{ certificate.course_name }} | MicroDegree" />
+  <meta name="twitter:description" content="Verify this official MicroDegree certificate." />
+  <meta name="twitter:image" content="https://certificate.microdegree.in/assets/certificate-preview.png" />
+
   <style>
     /* --- Page base --- */
     body{
