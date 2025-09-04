@@ -22,7 +22,7 @@
       position: relative;
       width: 100%;
       max-width: 1200px;
-      aspect-ratio: 297 / 210;
+      aspect-ratio: 297 / 210; /* A4 landscape ratio */
       background: url('/static/template.jpg.png') center center no-repeat;
       background-size: cover;
     }
@@ -34,7 +34,7 @@
       line-height: 1.2;
     }
 
-    /* Common box style */
+    /* Shared text box styling */
     .text-box {
       position: absolute;
       left: 50%;
@@ -42,48 +42,48 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding: 0 10px; /* small margin inside the box */
+      padding: 0 10px;
     }
 
     /* Student name */
     .name {
-      top: 38%;
+      top: 37.5%;
       width: 80%;
       font-size: clamp(1rem, 2.6vw, 2.4rem);
       font-weight: bold;
-      color: #c99235;
+      color: #c99235; /* gold */
     }
 
-    /* Fixed course title */
+    /* Course title (fixed to AWS Solutions Architect) */
     .course {
-      top: 54%;
+      top: 52.5%;
       width: 85%;
       font-size: clamp(0.95rem, 2.3vw, 2rem);
       font-weight: bold;
-      color: #000;
+      color: #000; /* black */
     }
 
-    /* Date bottom left */
+    /* Issued date bottom left */
     .date {
-      bottom: 30%;
+      bottom: 29.5%;
       left: 25%;
       transform: translateX(-50%);
       width: 25%;
       font-size: clamp(0.7rem, 1.4vw, 1.05rem);
       font-weight: bold;
-      color: #c99235;
+      color: #c99235; /* gold */
     }
 
     /* Certificate ID bottom right */
     .certid {
-      bottom: 30.5%;
+      bottom: 30%;
       left: auto;
       right: 25%;
       transform: translateX(50%);
       width: 25%;
       font-size: clamp(0.7rem, 1.4vw, 1.05rem);
       font-weight: bold;
-      color: #c99235;
+      color: #c99235; /* gold */
     }
   </style>
 </head>
