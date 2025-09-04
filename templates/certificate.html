@@ -6,8 +6,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ✅ Open Graph Meta Tags for LinkedIn/WhatsApp Sharing -->
-  <meta property="og:title" content="Certified {{ certificate.course_name }} | MicroDegree" />
+  <!-- ✅ Open Graph Meta Tags -->
+  <meta property="og:title" content="Certified AWS Solutions Architect | MicroDegree" />
   <meta property="og:description" content="Verify this official MicroDegree certificate awarded to {{ certificate.student_name }}." />
   <meta property="og:image" content="https://certificate.microdegree.in/assets/certificate-preview.png" />
   <meta property="og:url" content="https://certificate.microdegree.in/cert/{{ certificate.certificate_id }}" />
@@ -15,12 +15,12 @@
 
   <!-- ✅ Twitter Card Meta -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Certified {{ certificate.course_name }} | MicroDegree" />
+  <meta name="twitter:title" content="Certified AWS Solutions Architect | MicroDegree" />
   <meta name="twitter:description" content="Verify this official MicroDegree certificate." />
   <meta name="twitter:image" content="https://certificate.microdegree.in/assets/certificate-preview.png" />
 
   <style>
-    /* --- Page base --- */
+    /* Base */
     body {
       margin: 0;
       padding: 0;
@@ -32,16 +32,14 @@
       font-family: 'Cinzel', serif;
     }
 
-    /* Match the real certificate ratio: A4 landscape ≈ 297:210 (1.414:1) */
+    /* Certificate container with template */
     .certificate-container {
       position: relative;
       width: 100%;
       max-width: 1200px;
-      aspect-ratio: 297 / 210;
+      aspect-ratio: 297 / 210; /* A4 landscape ratio */
       background: url('/static/template.jpg.png') center center no-repeat;
-      background-size: cover; 
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-      border-radius: 8px;
+      background-size: cover;
     }
 
     .overlay {
@@ -51,55 +49,81 @@
       line-height: 1.1;
     }
 
-    /* Gold color for all dynamic fields */
-    .overlay div {
-      color: #c99235; /* ✅ exact golden shade */
-      font-weight: bold;
-    }
-
-    /* Fixed font sizes (no scaling) */
+    /* Student name in GOLD */
     .name {
       position: absolute;
       top: 43.5%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 34px;
+      font-weight: bold;
+      font-size: clamp(1rem, 2.6vw, 2.4rem);
       white-space: nowrap;
       max-width: 90%;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: #c99235;
     }
 
+    /* Fixed course title (AWS Solutions Architect) in BLACK */
     .course {
       position: absolute;
       top: 56.2%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 28px;
+      font-weight: bold;
+      font-size: clamp(0.95rem, 2.3vw, 2rem);
       white-space: nowrap;
       max-width: 92%;
       overflow: hidden;
       text-overflow: ellipsis;
       letter-spacing: .5px;
+      color: #000;
     }
 
-    /* Footer fields aligned to labels */
+    /* Date bottom left */
     .date {
       position: absolute;
       bottom: 30%;
       left: 24.5%;
       transform: translateX(-50%);
-      font-size: 16px;
+      font-weight: bold;
+      font-size: clamp(0.7rem, 1.4vw, 1.05rem);
       white-space: nowrap;
+      color: #000;
+      max-width: 40%;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
+    /* Certificate ID bottom right (in GOLD) */
     .certid {
       position: absolute;
       bottom: 30%;
       right: 24.5%;
       transform: translateX(50%);
-      font-size: 16px;
+      font-weight: bold;
+      font-size: clamp(0.7rem, 1.4vw, 1.05rem);
       white-space: nowrap;
+      color: #c99235;
+      max-width: 40%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Tablet */
+    @media (max-width: 768px) {
+      .certificate-container { max-width: 95%; }
+      .name { top: 43%; font-size: clamp(1rem, 4.2vw, 2rem); }
+      .course { top: 55.8%; font-size: clamp(0.9rem, 3.6vw, 1.7rem); }
+      .date, .certid { bottom: 23.5%; font-size: clamp(0.72rem, 2.5vw, 0.95rem); }
+    }
+
+    /* Phone */
+    @media (max-width: 480px) {
+      .certificate-container { max-width: 100%; }
+      .name { top: 42.5%; font-size: clamp(0.95rem, 5.2vw, 1.6rem); }
+      .course { top: 55.5%; font-size: clamp(0.9rem, 4.6vw, 1.4rem); }
+      .date, .certid { bottom: 29.5%; font-size: clamp(0.7rem, 3.6vw, 0.9rem); }
     }
   </style>
 </head>
@@ -107,7 +131,7 @@
   <div class="certificate-container">
     <div class="overlay">
       <div class="name">{{ certificate.student_name }}</div>
-      <div class="course">{{ certificate.course_name }}</div>
+      <div class="course">AWS Solutions Architect</div>
       <div class="date">{{ certificate.completion_date }}</div>
       <div class="certid">{{ certificate.certificate_id }}</div>
     </div>
