@@ -21,98 +21,85 @@
 
   <style>
     /* --- Page base --- */
-    body{
-      margin:0;
-      padding:0;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height:100vh;
-      background:#f8f8f8;
-      font-family:'Cinzel',serif;
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f8f8f8;
+      font-family: 'Cinzel', serif;
     }
 
     /* Match the real certificate ratio: A4 landscape ≈ 297:210 (1.414:1) */
-    .certificate-container{
-      position:relative;
-      width:100%;
-      max-width:1200px;
-      aspect-ratio:297 / 210;
-      background:url('/static/template.jpg.png') center center no-repeat;
-      background-size:cover; /* fills container exactly, no letterboxing */
+    .certificate-container {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      aspect-ratio: 297 / 210;
+      background: url('/static/template.jpg.png') center center no-repeat;
+      background-size: cover; 
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      border-radius: 8px;
     }
 
-    .overlay{
-      position:absolute;
-      inset:0;
-      color:#000;
-      text-align:center;
-      line-height:1.1;
+    .overlay {
+      position: absolute;
+      inset: 0;
+      text-align: center;
+      line-height: 1.1;
     }
 
-    /* Center content */
-    .name{
-      position:absolute;
-      top:43.5%;
-      left:50%;
-      transform:translate(-50%,-50%);
-      font-weight:bold;
-      font-size:clamp(1rem, 2.6vw, 2.4rem);
-      white-space:nowrap;
-      max-width:90%;
-      overflow:hidden;
-      text-overflow:ellipsis;
+    /* Gold color for all dynamic fields */
+    .overlay div {
+      color: #c99235; /* ✅ exact golden shade */
+      font-weight: bold;
     }
 
-    .course{
-      position:absolute;
-      top:56.2%;
-      left:50%;
-      transform:translate(-50%,-50%);
-      font-weight:bold;
-      font-size:clamp(0.95rem, 2.3vw, 2rem);
-      white-space:nowrap;
-      max-width:92%;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      letter-spacing:.5px;
+    /* Fixed font sizes (no scaling) */
+    .name {
+      position: absolute;
+      top: 43.5%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 34px;
+      white-space: nowrap;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    /* Footer fields aligned to the labels on the artwork */
-    .date{
-      position:absolute;
-      bottom:30%;
-      left:24.5%;
-      transform:translateX(-50%);
-      font-weight:bold;
-      font-size:clamp(0.7rem, 1.4vw, 1.05rem);
-      white-space:nowrap;
+    .course {
+      position: absolute;
+      top: 56.2%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      white-space: nowrap;
+      max-width: 92%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: .5px;
     }
 
-    .certid{
-      position:absolute;
-      bottom:30%;
-      right:24.5%;
-      transform:translateX(50%);
-      font-weight:bold;
-      font-size:clamp(0.7rem, 1.4vw, 1.05rem);
-      white-space:nowrap;
+    /* Footer fields aligned to labels */
+    .date {
+      position: absolute;
+      bottom: 30%;
+      left: 24.5%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      white-space: nowrap;
     }
 
-    /* Tablet tweaks */
-    @media (max-width: 768px){
-      .certificate-container{ max-width:95%; }
-      .name{ top:43%; font-size:clamp(1rem, 4.2vw, 2rem); }
-      .course{ top:55.8%; font-size:clamp(0.9rem, 3.6vw, 1.7rem); }
-      .date,.certid{ bottom:23.5%; font-size:clamp(0.72rem, 2.5vw, 0.95rem); }
-    }
-
-    /* Phone tweaks */
-    @media (max-width: 480px){
-      .certificate-container{ max-width:100%; }
-      .name{ top:42.5%; font-size:clamp(0.95rem, 5.2vw, 1.6rem); }
-      .course{ top:55.5%; font-size:clamp(0.9rem, 4.6vw, 1.4rem); }
-      .date,.certid{ bottom:29.5%; font-size:clamp(0.7rem, 3.6vw, 0.9rem); }
+    .certid {
+      position: absolute;
+      bottom: 30%;
+      right: 24.5%;
+      transform: translateX(50%);
+      font-size: 16px;
+      white-space: nowrap;
     }
   </style>
 </head>
