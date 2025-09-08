@@ -85,22 +85,22 @@
       font-weight: bold;
       color: #c99235; /* gold */
      /* Make course title smaller only on mobile (max 600px wide) */
+/* Mobile view adjustments */
 @media (max-width: 600px) {
   .course {
-    font-size: clamp(0.10rem, 1vw, 0.10rem);
-  }
-}
-/* Shrink text for mobile screens */
-@media (max-width: 600px) {
-  .course {
-    font-size: clamp(0.10rem, 1vw, 0.10rem);
+    font-size: 0.7rem;   /* much smaller */
   }
 
   .date,
   .certid {
-    font-size: clamp(0.10rem, 1vw, 0.10rem);
+    font-size: 0.6rem;   /* very small */
+  }
+
+  .student-name {
+    font-size: 0.9rem;   /* slightly smaller */
   }
 }
+
 
  
     }
