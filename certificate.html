@@ -4,68 +4,98 @@
   <meta charset="UTF-8" />
   <title>MicroDegree Certificate</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: url('/static/template.jpg.png') no-repeat center center;
-      background-size: contain;
-      height: 100vh;
-      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f8f8f8;
       font-family: 'Cinzel', serif;
-      overflow: hidden;
+    }
+
+    .certificate-container {
       position: relative;
+      width: 100%;
+      max-width: 1200px;
+      aspect-ratio: 297 / 210; /* A4 landscape ratio */
+      background: url('/static/template.jpg.png') center center no-repeat;
+      background-size: cover;
     }
 
     .overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      color: #000;
+      inset: 0;
+      text-align: center;
+      line-height: 1.2;
     }
 
+    /* Shared text box styling */
+    .text-box {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 10px;
+    }
+
+    /* Student name */
     .name {
-      position: absolute;
-      top: 43%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2.8em;
+      top: 37.5%;
+      width: 80%;
+      font-size: clamp(1rem, 2.6vw, 2.4rem);
       font-weight: bold;
+      color: #c99235; /* gold */
     }
 
+    /* Course title (fixed to AWS Solutions Architect) */
     .course {
-      position: absolute;
       top: 52.5%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 1.6em;
-      letter-spacing: 1px;
+      width: 85%;
+      font-size: clamp(0.95rem, 2.3vw, 2rem);
+      font-weight: bold;
+      color: #000; /* black */
     }
 
+    /* Issued date bottom left */
     .date {
-      position: absolute;
-      bottom: 15%;
-      left: 14.5%;
-      font-size: 1.1em;
+      bottom: 32.5%;
+      left: 25%;
+      transform: translateX(-50%);
+      width: 25%;
+      font-size: clamp(0.7rem, 1.4vw, 1.05rem);
+      font-weight: bold;
+      color: #c99235; /* gold */
     }
 
+    /* Certificate ID bottom right */
     .certid {
-      position: absolute;
-      bottom: 15%;
-      right: 14.5%;
-      font-size: 1.1em;
+      bottom: 32.5%;
+      left: auto;
+      right: 25%;
+      transform: translateX(50%);
+      width: 25%;
+      font-size: clamp(0.7rem, 1.4vw, 1.05rem);
+      font-weight: bold;
+      color: #c99235; /* gold */
+      
     }
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <div class="name">{{student_name}}</div>
-    <div class="course">{{course_name}}</div>
-    <div class="date">{{completion_date}}</div>
-    <div class="certid">{{certificate_id}}</div>
+  <div class="certificate-container">
+    <div class="overlay">
+      <div class="text-box name">{{ certificate.student_name }}</div>
+      <div class="text-box course">AWS Solutions Architect</div>
+      <div class="text-box date">{{ certificate.completion_date.replace('-', '/') }}</div>
+      <div class="text-box certid">{{ certificate.certificate_id }}</div>
+    </div>
   </div>
 </body>
 </html>
-
