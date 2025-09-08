@@ -84,7 +84,13 @@
       font-size: clamp(0.7rem, 1.4vw, 1.05rem);
       font-weight: bold;
       color: #c99235; /* gold */
-      
+     /* Make course title smaller only on mobile (max 600px wide) */
+@media (max-width: 600px) {
+  .course {
+    font-size: clamp(0.75rem, 4vw, 1.4rem);
+  }
+}
+ 
     }
   </style>
 </head>
