@@ -86,20 +86,22 @@
       color: #c99235; /* gold */
      /* Make course title smaller only on mobile (max 600px wide) */
 /* Mobile view adjustments */
+/* Force smaller text on mobile */
 @media (max-width: 600px) {
   .course {
-    font-size: 0.7rem;   /* much smaller */
+    font-size: 10px !important;   /* course title */
   }
 
   .date,
   .certid {
-    font-size: 0.6rem;   /* very small */
+    font-size: 9px !important;    /* issued date + certificate number */
   }
 
   .student-name {
-    font-size: 0.9rem;   /* slightly smaller */
+    font-size: 12px !important;   /* student name */
   }
 }
+
 
 
  
