@@ -65,7 +65,7 @@
 
     /* Issued date bottom left */
     .date {
-      bottom: 29.5%;
+      bottom: 32.5%;
       left: 25%;
       transform: translateX(-50%);
       width: 25%;
@@ -76,7 +76,7 @@
 
     /* Certificate ID bottom right */
     .certid {
-      bottom: 30%;
+      bottom: 32.5%;
       left: auto;
       right: 25%;
       transform: translateX(50%);
@@ -84,6 +84,13 @@
       font-size: clamp(0.7rem, 1.4vw, 1.05rem);
       font-weight: bold;
       color: #c99235; /* gold */
+     /* Make course title smaller only on mobile (max 600px wide) */
+@media (max-width: 600px) {
+  .course {
+    font-size: clamp(0.75rem, 4vw, 1.4rem);
+  }
+}
+ 
     }
   </style>
 </head>
@@ -92,7 +99,7 @@
     <div class="overlay">
       <div class="text-box name">{{ certificate.student_name }}</div>
       <div class="text-box course">AWS Solutions Architect</div>
-      <div class="text-box date">{{ certificate.completion_date }}</div>
+      <div class="text-box date">{{ certificate.completion_date.replace('-', '/') }}</div>
       <div class="text-box certid">{{ certificate.certificate_id }}</div>
     </div>
   </div>
