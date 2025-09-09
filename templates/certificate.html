@@ -54,13 +54,13 @@
       color: #c99235; /* gold */
     }
 
-    /* Course title (fixed to AWS Solutions Architect) */
+    /* Course title */
     .course {
       top: 52.5%;
       width: 85%;
       font-size: clamp(0.95rem, 2.3vw, 2rem);
       font-weight: bold;
-      color: #000; /* black */
+      color: #000;
     }
 
     /* Issued date bottom left */
@@ -71,40 +71,26 @@
       width: 25%;
       font-size: clamp(0.7rem, 1.4vw, 1.05rem);
       font-weight: bold;
-      color: #c99235; /* gold */
+      color: #c99235;
     }
 
     /* Certificate ID bottom right */
     .certid {
       bottom: 32.5%;
-      left: auto;
-      right: 25%;
+      right: 0%;
+      left: 48.5%;
       transform: translateX(50%);
       width: 25%;
       font-size: clamp(0.7rem, 1.4vw, 1.05rem);
       font-weight: bold;
-      color: #c99235; /* gold */
-     /* Make course title smaller only on mobile (max 600px wide) */
-/* Mobile view adjustments */
-/* Force smaller text on mobile */
-@media (max-width: 600px) {
-  .course {
-    font-size: 10px !important;   /* course title */
-  }
+      color: #c99235;
+    }
 
-  .date,
-  .certid {
-    font-size: 9px !important;    /* issued date + certificate number */
-  }
-
-  .student-name {
-    font-size: 12px !important;   /* student name */
-  }
-}
-
-
-
- 
+    /* Mobile view adjustments */
+    @media (max-width: 600px) {
+      .name { font-size: 12px !important; }
+      .course { font-size: 10px !important; }
+      .date, .certid { font-size: 9px !important; }
     }
   </style>
 </head>
