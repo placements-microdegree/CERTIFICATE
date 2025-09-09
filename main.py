@@ -94,6 +94,12 @@ async def api_verify_certificate(certificate_id: str):
     if result["status"] == "success":
         return {"success": True, "data": result["cert"]}
     return JSONResponse({"success": False, "message": "Certificate not found"}, status_code=404)
+@app.get("/cert/{cert_id}")
+async def get_certificate(cert_id: str, request: Request):
+    certificate = get_certificate_by_id(cert_id)
+    if not certificate:
+        return templates.TemplateResponse("error.html", {"request": request, "message": "Certificate not found"})
+    return templates.TemplateResponse("certificate.html", {"request": request, "certificate": certificate})
 
 # ----------------------
 # Single Download Route
@@ -145,6 +151,7 @@ async def debug_certificate_ids():
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
+        
 
 @app.get("/debug/full")
 async def debug_full():
@@ -167,3 +174,16 @@ async def debug_full():
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+@app.get("/cert/{cert_id}")
+async def certificate_page(request: Request, cert_id: str):
+    certificate = get_certificate_by_id(cert_id)
+    if not certificate:
+        return templates.TemplateResponse(
+            "error.html",
+            {"request": request, "message": f"Certificate ID {cert_id} not found"}
+        )
+    return templates.TemplateResponse(
+        "certificate.html",
+        {"request": request, "certificate": certificate}
+    )

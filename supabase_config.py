@@ -1,6 +1,7 @@
 import os
 from supabase import create_client, Client
 from typing import Optional, List, Dict
+from datetime import datetime
 
 # ----------------------
 # Supabase credentials
@@ -30,6 +31,21 @@ except Exception as e:
 TABLE_NAME = "certificates"  # ONLY use this table now
 
 # ----------------------
+# Date formatter
+# ----------------------
+def format_date(date_value: Optional[str]) -> Optional[str]:
+    """
+    Convert YYYY-MM-DD (from Supabase DATE) → DD/MM/YYYY
+    """
+    if not date_value:
+        return None
+    try:
+        date_obj = datetime.strptime(str(date_value), "%Y-%m-%d")
+        return date_obj.strftime("%d/%m/%Y")
+    except Exception:
+        return str(date_value)  # fallback
+
+# ----------------------
 # Functions
 # ----------------------
 def get_certificate_by_id(certificate_id: str) -> Optional[Dict]:
@@ -50,7 +66,7 @@ def get_certificate_by_id(certificate_id: str) -> Optional[Dict]:
             return {
                 "student_name": cert.get("student_name"),
                 "course_name": cert.get("course_name"),
-                "completion_date": cert.get("completion_date"),
+                "completion_date": format_date(cert.get("completion_date")),  # 👈 formatted here
                 "certificate_id": cert.get("certificate_id"),
                 "certificate_url": cert.get("certificate_url"),
                 "issued_to": cert.get("student_name"),
@@ -70,7 +86,11 @@ def get_all_certificates(limit: int = 20) -> List[Dict]:
     print(f"[DEBUG] Fetching all certificates (limit={limit}) from table: {TABLE_NAME}")
     try:
         response = supabase.table(TABLE_NAME).select("*").limit(limit).execute()
-        return response.data or []
+        certificates = response.data or []
+        # format dates for all
+        for cert in certificates:
+            cert["completion_date"] = format_date(cert.get("completion_date"))
+        return certificates
     except Exception as e:
         print(f"[ERROR] Failed to fetch all certificates: {e}")
         return []
