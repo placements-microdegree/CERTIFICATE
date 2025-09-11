@@ -14,9 +14,6 @@ from dateutil import parser
 # Load environment variables
 # ----------------------
 # Only load .env if running locally
-# ----------------------
-# Load environment variables
-# ----------------------
 if os.path.exists(".env"):
     from dotenv import load_dotenv
     load_dotenv()
@@ -24,23 +21,16 @@ if os.path.exists(".env"):
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-print("=== DEBUG ENVIRONMENT VARIABLES ===")
-print("SUPABASE_URL:", SUPABASE_URL)
-print("SUPABASE_KEY present:", bool(SUPABASE_KEY))
-if SUPABASE_KEY:
-    print("SUPABASE_KEY starts with:", SUPABASE_KEY[:6], "...")  # partial print
-print("===================================")
+print("DEBUG Supabase URL:", SUPABASE_URL)
+print("DEBUG Supabase KEY present:", bool(SUPABASE_KEY))
 
-supabase = None
-if SUPABASE_URL and SUPABASE_KEY:
-    try:
-        from supabase import create_client
-        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("✅ Supabase client initialized")
-    except Exception as e:
-        print("❌ Failed to initialize Supabase client:", e)
-else:
-    print("⚠️ Supabase credentials missing! Check Render → Environment tab.")
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise ValueError(
+        "❌ Supabase credentials are missing. "
+        "On Render, go to your service → Environment → Add SUPABASE_URL and SUPABASE_KEY"
+    )
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ----------------------
 # App Setup
