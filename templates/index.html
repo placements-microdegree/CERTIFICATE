@@ -196,10 +196,11 @@
           <span class="detail-label">Course</span>
           <span class="detail-value">${certificate.course_name}</span>
         </div>
-        <div class="detail-item">
-          <span class="detail-label">Completion Date</span>
-          <span class="detail-value">${new Date(certificate.completion_date).toLocaleDateString()}</span>
-        </div>
+       <div class="detail-item">
+  <span class="detail-label">Completion Date</span>
+  <span class="detail-value">${certificate.completion_date || 'N/A'}</span>
+</div>
+
         ${certificate.certificate_url ? `<div class="detail-item">
           <span class="detail-label">Download</span>
           <span class="detail-value"><a href="${certificate.certificate_url}" target="_blank" class="text-white underline">Download PDF</a></span>
