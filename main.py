@@ -1,28 +1,50 @@
 import os
 import re
+import traceback
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from supabase_config import get_certificate_by_id, get_all_certificates, supabase
-from dotenv import load_dotenv
+from supabase_config import get_certificate_by_id, get_all_certificates
 from supabase import create_client
 from dateutil import parser
-import traceback
 
 # ----------------------
-# App Setup
+# Load environment variables
 # ----------------------
-load_dotenv()
+# Only load .env if running locally
+# ----------------------
+# Load environment variables
+# ----------------------
+if os.path.exists(".env"):
+    from dotenv import load_dotenv
+    load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise ValueError("❌ Supabase credentials are missing. Check your .env file.")
+print("=== DEBUG ENVIRONMENT VARIABLES ===")
+print("SUPABASE_URL:", SUPABASE_URL)
+print("SUPABASE_KEY present:", bool(SUPABASE_KEY))
+if SUPABASE_KEY:
+    print("SUPABASE_KEY starts with:", SUPABASE_KEY[:6], "...")  # partial print
+print("===================================")
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase = None
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        from supabase import create_client
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print("✅ Supabase client initialized")
+    except Exception as e:
+        print("❌ Failed to initialize Supabase client:", e)
+else:
+    print("⚠️ Supabase credentials missing! Check Render → Environment tab.")
+
+# ----------------------
+# App Setup
+# ----------------------
 app = FastAPI(title="Certificate Verification API", version="1.0.0")
 
 app.add_middleware(
@@ -36,7 +58,6 @@ app.add_middleware(
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-
 # ----------------------
 # Helper Functions
 # ----------------------
@@ -45,12 +66,9 @@ def sanitize_cert_id(cert_id: str) -> str:
     cert_id = cert_id.strip()
     if cert_id.endswith(".0"):
         cert_id = cert_id[:-2]
-
     cert_id = re.sub(r"[^A-Za-z0-9\-]", "", cert_id)
-
     if not cert_id.upper().startswith("AWSC-"):
         cert_id = f"AWSC-{cert_id}"
-
     return cert_id.upper()
 
 
@@ -60,7 +78,6 @@ def fetch_certificate(cert_id: str) -> dict:
     cert = get_certificate_by_id(cert_id)
     if not cert:
         return {"status": "error", "cert": None}
-
     try:
         raw_date = cert.get("completion_date")
         if raw_date:
@@ -70,9 +87,7 @@ def fetch_certificate(cert_id: str) -> dict:
             cert["completion_date"] = "N/A"
     except Exception:
         cert["completion_date"] = "N/A"
-
     return {"status": "success", "cert": cert}
-
 
 # ----------------------
 # Frontend Pages
@@ -118,7 +133,6 @@ async def verify_page(request: Request, certificate_id: str):
     result = fetch_certificate(certificate_id)
     return templates.TemplateResponse("result.html", {"request": request, **result})
 
-
 # ----------------------
 # API Routes
 # ----------------------
@@ -146,7 +160,6 @@ async def api_verify_certificate(certificate_id: str):
         return {"success": True, "data": result["cert"]}
     return JSONResponse({"success": False, "message": "Certificate not found"}, status_code=404)
 
-
 # ----------------------
 # PDF Download
 # ----------------------
@@ -157,7 +170,6 @@ async def download_pdf(cert_id: str):
     if os.path.exists(file_path):
         return FileResponse(file_path, filename=f"{cert_id}.pdf", media_type="application/pdf")
     return JSONResponse({"success": False, "message": "Certificate file not found"}, status_code=404)
-
 
 # ----------------------
 # Debug Routes
@@ -214,3 +226,13 @@ async def debug_full():
         }
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+# ----------------------
+# Environment Debug
+# ----------------------
+@app.get("/debug/env")
+async def debug_env():
+    return {
+        "SUPABASE_URL": SUPABASE_URL,
+        "SUPABASE_KEY_present": bool(SUPABASE_KEY)
+    }
