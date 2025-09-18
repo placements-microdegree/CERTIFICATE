@@ -2,9 +2,6 @@ import pandas as pd
 from supabase import create_client, Client
 
 # Supabase credentials (replace with yours)
-url = "https://ppwdqxeiksycubxznhgi.supabase.co"
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwd2RxeGVpa3N5Y3VieHpuaGdpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzI2NzY5MiwiZXhwIjoyMDY4ODQzNjkyfQ.GY9GFTs_UY5thZmguuBo8PfKtKySwZLB641gqSj0g5s"  # Use service_role key
-supabase: Client = create_client(url, key)
 
 # Load CSV
 df = pd.read_csv("AWS Live Certification  (Responses) - Form Responses 1 (2).csv")
