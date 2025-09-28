@@ -23,7 +23,7 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
@@ -33,16 +33,13 @@
     }
 
     .animated-bg { position: fixed; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index:-2; }
-
     .animated-bg::before {
-      content:'';
-      position:absolute; top:0; left:0; width:100%; height:100%;
+      content:''; position:absolute; top:0; left:0; width:100%; height:100%;
       background: radial-gradient(circle at 20% 50%, rgba(120,119,198,0.3) 0%, transparent 50%),
                  radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
                  radial-gradient(circle at 40% 80%, rgba(120,219,255,0.3) 0%, transparent 50%);
       animation: bgShift 10s ease-in-out infinite;
     }
-
     @keyframes bgShift { 0%,100% {opacity:1;} 50% {opacity:0.8;} }
 
     .floating-elements { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; }
@@ -54,7 +51,7 @@
     @keyframes float {0%,100%{transform:translateY(0px) rotate(0deg);opacity:0.7;}50%{transform:translateY(-30px) rotate(180deg);opacity:1;}}
 
     .main-container { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:1rem; position:relative; z-index:1; }
-    
+
     .verification-card {
       background: var(--glass-bg); backdrop-filter: blur(20px); border:1px solid var(--glass-border);
       border-radius:2rem; box-shadow: var(--shadow); padding:3rem; max-width:32rem; width:100%; position:relative; overflow:hidden;
@@ -86,21 +83,9 @@
     .verify-btn.loading .btn-spinner { display:inline-block; }
     @keyframes spin {0%{transform:rotate(0deg);}100%{transform:rotate(360deg);} }
 
-    .result-section { display:none; margin-top:2rem; padding:1.5rem; background: rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:1rem; backdrop-filter: blur(10px); }
-    .result-section.show { display:block; animation: fadeInUp 0.5s ease;}
-    @keyframes fadeInUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
-
-    .result-header { display:flex; align-items:center; margin-bottom:1rem; }
-    .result-icon { width:40px;height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:1rem; font-size:1.2rem; }
-    .result-icon.success { background: var(--success); color:var(--text-white); }
-    .result-icon.error { background: var(--error); color:var(--text-white); }
-    .result-title { font-size:1.25rem; font-weight:600; color: var(--text-white); }
-
-    .certificate-details { display:grid; gap:1rem; margin-top:1rem; }
-    .detail-item { display:flex; justify-content:space-between; align-items:center; padding:0.75rem; background: rgba(255,255,255,0.05); border-radius:0.5rem; border:1px solid rgba(255,255,255,0.1); }
-    .detail-label { font-weight:500; color: var(--text-gray); font-size:0.9rem; }
-    .detail-value { font-weight:600; color:var(--text-white); text-align:right; }
-    .error-message { color:#fca5a5; text-align:center; font-weight:500; }
+    .result-section { display:none; margin-top:1.5rem; background: rgba(255,255,255,0.1); border:1px solid var(--glass-border); border-radius:1rem; padding:1rem; color:var(--text-white); }
+    .result-section h3 { margin-bottom:0.5rem; }
+    .detail-item { display:flex; justify-content:space-between; margin-bottom:0.25rem; }
 
     @media (max-width:640px){ .verification-card{padding:2rem;margin:1rem;} .card-title{font-size:1.5rem;} .logo-container{width:60px;height:60px;} .logo-container i{font-size:1.5rem;} }
   </style>
@@ -125,20 +110,17 @@
       <div class="search-section">
         <div class="input-group">
           <i class="fas fa-search input-icon"></i>
-          <input type="text" id="certificateId" class="form-input" placeholder="Enter Certificate ID (e.g., I1)" autocomplete="off">
+          <input type="text" id="certificateId" class="form-input" placeholder="Enter Certificate ID (e.g., AWSC-4363)" autocomplete="off">
         </div>
         <button id="verifyBtn" class="verify-btn">
           <div class="btn-spinner"></div>
           <span class="btn-text">Verify Certificate</span>
         </button>
-      </div>
 
-      <div id="resultSection" class="result-section">
-        <div class="result-header">
-          <div id="resultIcon" class="result-icon"><i class="fas fa-check"></i></div>
-          <h3 id="resultTitle" class="result-title">Certificate Found</h3>
+        <div id="resultSection" class="result-section">
+          <h3 id="resultTitle"></h3>
+          <div id="certificateDetails"></div>
         </div>
-        <div id="certificateDetails" class="certificate-details"></div>
       </div>
     </div>
   </div>
@@ -146,88 +128,81 @@
   <script>
     const certificateIdInput = document.getElementById('certificateId');
     const verifyBtn = document.getElementById('verifyBtn');
-    const btnText = verifyBtn.querySelector('.btn-text');
     const resultSection = document.getElementById('resultSection');
-    const resultIcon = document.getElementById('resultIcon');
     const resultTitle = document.getElementById('resultTitle');
     const certificateDetails = document.getElementById('certificateDetails');
 
+    function sanitizeCertId(id){
+      id = id.trim();
+      if(id.endsWith(".0")) id = id.slice(0, -2);
+      id = id.replace(/[^A-Za-z0-9\-]/g, '');
+      if(!id.toUpperCase().startsWith("AWSC-")) id = "AWSC-" + id;
+      return id.toUpperCase();
+    }
+
+    function formatDate(dateStr){
+      if(!dateStr) return 'N/A';
+      const d = new Date(dateStr);
+      if(isNaN(d)) return 'N/A';
+      return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'2-digit'});
+    }
+
     async function verifyCertificate() {
-      const id = certificateIdInput.value.trim();
-      if(!id){ showError('Please enter a certificate ID'); return; }
+      const rawId = certificateIdInput.value;
+      if(!rawId){ alert('Please enter a certificate ID'); return; }
+
+      const id = sanitizeCertId(rawId);
 
       verifyBtn.classList.add('loading');
-      btnText.textContent = 'Verifying...';
-      resultSection.classList.remove('show');
+      verifyBtn.querySelector('.btn-text').textContent = 'Verifying...';
+      resultSection.style.display = 'none';
 
       try {
-        const response = await fetch(`https://certificate-verification-backend-6r7x.onrender.com/api/certificate/${encodeURIComponent(id)}`);
+        const response = await fetch(`http://159.65.0.55:8000/api/certificate/${encodeURIComponent(id)}`);
         const data = await response.json();
 
         if(response.ok && data.success){
-          const certificate = data.data;
-          showSuccess(certificate);
-        }else{
-          showError(data.message || 'Certificate not found');
+          const cert = data.data;
+          resultSection.className='result-section';
+          resultTitle.textContent='Certificate Verified ✓';
+          certificateDetails.innerHTML=`
+            <div class="detail-item"><span>ID</span><span>${cert.certificate_id}</span></div>
+            <div class="detail-item"><span>Recipient</span><span>${cert.student_name || cert.issued_to}</span></div>
+            <div class="detail-item"><span>Course</span><span>${cert.course_name}</span></div>
+            <div class="detail-item"><span>Completion Date</span><span>${formatDate(cert.completion_date)}</span></div>
+            ${cert.certificate_url ? `<div class="detail-item"><span>Download</span><span><a href="${cert.certificate_url}" target="_blank" style="color:white;text-decoration:underline;">PDF</a></span></div>` : ''}
+          `;
+          resultSection.style.display='block';
+        } else {
+          resultSection.className='result-section';
+          resultTitle.textContent='Verification Failed';
+          certificateDetails.innerHTML=`${data.message || 'Certificate not found'}`;
+          resultSection.style.display='block';
         }
-      } catch(error){
-        console.error('Verification error:', error);
-        showError('Unable to verify certificate. Please try again.');
+      } catch(e){
+        console.error(e);
+        resultSection.className='result-section';
+        resultTitle.textContent='Verification Failed';
+        certificateDetails.innerHTML='Unable to verify certificate. Please try again.';
+        resultSection.style.display='block';
       } finally {
         verifyBtn.classList.remove('loading');
-        btnText.textContent = 'Verify Certificate';
+        verifyBtn.querySelector('.btn-text').textContent='Verify Certificate';
       }
-    }
-
-    function showSuccess(certificate){
-      resultIcon.className='result-icon success';
-      resultIcon.innerHTML='<i class="fas fa-check"></i>';
-      resultTitle.textContent='Certificate Verified ✓';
-      certificateDetails.innerHTML=`
-        <div class="detail-item">
-          <span class="detail-label">Certificate ID</span>
-          <span class="detail-value">${certificate.certificate_id}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Recipient</span>
-          <span class="detail-value">${certificate.student_name || certificate.issued_to}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Course</span>
-          <span class="detail-value">${certificate.course_name}</span>
-        </div>
-       <div class="detail-item">
-  <span class="detail-label">Completion Date</span>
-  <span class="detail-value">${certificate.completion_date || 'N/A'}</span>
-</div>
-
-        ${certificate.certificate_url ? `<div class="detail-item">
-          <span class="detail-label">Download</span>
-          <span class="detail-value"><a href="${certificate.certificate_url}" target="_blank" class="text-white underline">Download PDF</a></span>
-        </div>` : ''}
-      `;
-      resultSection.classList.add('show');
-    }
-
-    function showError(message){
-      resultIcon.className='result-icon error';
-      resultIcon.innerHTML='<i class="fas fa-times"></i>';
-      resultTitle.textContent='Verification Failed';
-      certificateDetails.innerHTML=`<div class="error-message">${message}</div>`;
-      resultSection.classList.add('show');
     }
 
     verifyBtn.addEventListener('click', verifyCertificate);
     certificateIdInput.addEventListener('keypress', e => { if(e.key==='Enter') verifyCertificate(); });
 
-    const pathParts = window.location.pathname.split('/').filter(p => p.length>0);
-    if(pathParts.length>0){
-      const lastPart=pathParts[pathParts.length-1];
-      if(lastPart && lastPart!=='index.html'){ certificateIdInput.value=lastPart; verifyCertificate(); }
+    const pathParts = window.location.pathname.split('/').filter(p=>p.length>0);
+    if(pathParts.length>0 && pathParts[0]!=='index.html'){
+      certificateIdInput.value = sanitizeCertId(pathParts[pathParts.length-1]);
+      verifyCertificate();
     }
 
     document.addEventListener('mousemove', e=>{
       const card=document.querySelector('.verification-card');
+      if(!card) return;
       const rect=card.getBoundingClientRect();
       const x=e.clientX-rect.left;
       const y=e.clientY-rect.top;
@@ -235,7 +210,9 @@
       const rotateX=(y-centerY)/20, rotateY=(centerX-x)/20;
       if(e.clientX>=rect.left && e.clientX<=rect.right && e.clientY>=rect.top && e.clientY<=rect.bottom){
         card.style.transform=`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
-      } else { card.style.transform='perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)'; }
+      } else {
+        card.style.transform='perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+      }
     });
   </script>
 </body>
